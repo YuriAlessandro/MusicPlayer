@@ -44,6 +44,9 @@ public class AdminPanel extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         btnBack = new javax.swing.JButton();
         txtAdd = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        menuShowUsers = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,6 +73,21 @@ public class AdminPanel extends javax.swing.JFrame {
                 btnBackActionPerformed(evt);
             }
         });
+
+        jMenu1.setText("File");
+
+        menuShowUsers.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        menuShowUsers.setText("Show users");
+        menuShowUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuShowUsersActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuShowUsers);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -163,6 +181,10 @@ public class AdminPanel extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnBackActionPerformed
 
+    private void menuShowUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuShowUsersActionPerformed
+        new ShowUsers(this, true).setVisible(true);
+    }//GEN-LAST:event_menuShowUsersActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -206,8 +228,11 @@ public class AdminPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JMenuItem menuShowUsers;
     private javax.swing.JLabel txtAdd;
     private javax.swing.JTextField txtCUserName;
     private javax.swing.JTextField txtCUserPwd;

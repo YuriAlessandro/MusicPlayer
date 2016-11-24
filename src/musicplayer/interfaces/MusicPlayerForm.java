@@ -5,18 +5,31 @@
  */
 package musicplayer.interfaces;
 
+import javazoom.jl.player.Player;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javazoom.jl.decoder.JavaLayerException;
+
 /**
  *
  * @author yurialessandro
  */
 public class MusicPlayerForm extends javax.swing.JFrame {
-
+    
+    private String path;
+    private Player play;
+//    private Player play;
     /**
      * Creates new form MusicPlayerForm
      */
-    public MusicPlayerForm() {
+    public MusicPlayerForm(){
         initComponents();
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+        
     }
 
     /**
@@ -28,38 +41,81 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        btnChoosePath = new javax.swing.JButton();
+        lblNameMusic = new javax.swing.JLabel();
+        btnPlay = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        jLabel1.setText("Choose music:");
+
+        btnChoosePath.setText("...");
+        btnChoosePath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChoosePathActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        });
+
+        btnPlay.setText("PLAY");
+        btnPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPlayActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblNameMusic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnChoosePath, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnPlay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(68, 68, 68)))
+                .addContainerGap(401, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(btnChoosePath))
+                .addGap(18, 18, 18)
+                .addComponent(lblNameMusic, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPlay)
+                .addContainerGap(354, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnChoosePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChoosePathActionPerformed
+        JFileChooser jf = new JFileChooser();
+        jf.setMultiSelectionEnabled(false);
+        int choose = jf.showOpenDialog(this);
+        
+        if(choose == JFileChooser.APPROVE_OPTION){
+            this.path = jf.getSelectedFile().getPath();
+            this.lblNameMusic.setText(jf.getSelectedFile().getName());
+        }
+        
+    }//GEN-LAST:event_btnChoosePathActionPerformed
+
+    private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
+        btnPlay.setEnabled(false);
+        btnChoosePath.setEnabled(false);
+        new ThreadImpl((Runnable) play, this.path).start();
+    }//GEN-LAST:event_btnPlayActionPerformed
 
     /**
      * @param args the command line arguments
@@ -97,7 +153,29 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JButton btnChoosePath;
+    private javax.swing.JButton btnPlay;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblNameMusic;
     // End of variables declaration//GEN-END:variables
+
+    private class ThreadImpl extends Thread {
+
+        public ThreadImpl(Runnable r, String string) {
+            super(r, string);
+        }
+        
+        @Override
+        public void run(){
+            try {
+                FileInputStream fis = new FileInputStream(path);
+                play = new Player(fis);
+                
+                play.play();
+                //            play.wait();
+            } catch (JavaLayerException | FileNotFoundException ex) {
+                Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 }

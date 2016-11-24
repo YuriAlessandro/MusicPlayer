@@ -183,7 +183,8 @@ public class LoginForm extends javax.swing.JFrame {
                     new MusicPlayerForm().setVisible(true);
                     this.setVisible(false);
                 }else if(a instanceof UserVIP){
-                    lblErrorLogin.setText("\"User VIP\" functionalilly withouf suport yet.");
+                    new MusicPlayerVIPForm().setVisible(true);
+                    this.setVisible(false);
                 }  
             }else{
                 lblErrorLogin.setText("Wrong User or Password. Try again.");
