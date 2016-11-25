@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import musicplayer.User;
 
 /**
- * Classe que implementa a TAD Tree Binaria de Busca, utilizando um Node de Users. 
+ * Classe que implementa a TAD Árvore Binaria de Busca, utilizando um nó de usuário. 
  * Será utilizada para armazenagem de Users na agenda de contatos.
  * @see Node 
  * @author Yuri Alessandro Martins
@@ -28,9 +28,9 @@ public class Tree {
     }
 
     /**
-     * Insere novas Pessoas na árvore. Implementado de forma recursiva.
+     * Insere novos usuários na árvore. Implementado de forma recursiva.
      * @see Pessoa 
-     * @param p Nova pessoa a ser adicionada na árvore.
+     * @param p Novo usuário a ser adicionado na árvore.
      */
     public void insert(User p) {
         if (this.root == null) {
@@ -56,7 +56,7 @@ public class Tree {
             }
             // O novo igual a root:
             else {
-                System.err.println("Adicione um sobrename ou apelido para diferenciar o contato.");
+                System.err.println("Usuário já existe.");
             }
         }
 
@@ -65,7 +65,7 @@ public class Tree {
     /**
      * Método auxiliar da recursão do método de inserir da árvore.
      * @param n No base para recursão.
-     * @param p Nova pessoa a ser adicionada.
+     * @param p Novo usuário a ser adicionado.
      */
     private void insert(Node n, User p) {
         // O novo maior que a raíz:
@@ -88,14 +88,14 @@ public class Tree {
         }
         // O novo igual a root:
         else {
-            System.err.println("Adicione um sobrename ou apelido para diferenciar o contato.");
+            System.err.println("Usuário já existe.");
         }
     }
 
     /**
-     * Remover uma pessoa da árvore. Método implementado de forma iterativa.
-     * @param p Pessoa que deverá ser removida
-     * @return True, se a pessoa foi removida com sucesso, False, caso contrário.
+     * Remover um usuário da árvore. Método implementado de forma iterativa.
+     * @param p Usuário que deverá ser removido
+     * @return True, se o usuário foi removido com sucesso, False, caso contrário.
      */
     public boolean remove(User p) {
 
@@ -284,7 +284,7 @@ public class Tree {
      * Busca da árvore em largura. Esse método consiste em realizar a busca a partir da raiz
      * sempre visitando os nós vizinhos de cada nó por onde a busca passa.
      * @param name Nome da pessoa a ser buscada na árvore.
-     * @return Nó da pessoa que foi procurada. null se a pessoa não estiver na árvore.
+     * @return Nó do usuário que foi procurado. null se o usuário não estiver na árvore.
      */
     public Node searchBreadth(String name) {
         if (this.root == null)
@@ -308,8 +308,8 @@ public class Tree {
 
     /**
      * Busca binaria da Arvore Binaria de Busca padrão.
-     * @param name Nome da pessoa a ser buscada na árvore.
-     * @return Nó da pessoa que foi buscada. null se a pessoa não estiver na árvore.
+     * @param name Nome do usuário a ser buscado na árvore.
+     * @return Nó do usuário que foi buscado. null se o usuário não estiver na árvore.
      */
     public Node searchDepth(String name) {
         return this.searchDepth(this.root, name);
@@ -370,7 +370,7 @@ public class Tree {
     }
 
     /**
-     * Obtem o menor nó da árvore. Neste caso, a pessoa lexicograficamente menor.
+     * Obtem o menor nó da árvore. Neste caso, o usuário com nome lexicograficamente menor.
      * @return Menor nó da árvore.
      */
     public Node getLeast() {
@@ -386,7 +386,7 @@ public class Tree {
     }
 
     /**
-     * Obtem o maior nó da árvore. Neste caso, a pessoa lexicograficamente maior.
+     * Obtem o maior nó da árvore. Neste caso, o usuário com nome lexicograficamente maior.
      * @return Maior nó da árvore.
      */
     public Node getGreatest() {
@@ -403,7 +403,7 @@ public class Tree {
 
     /**
      * Obtem a raíz da árvore.
-     * @return Raíza da árvore.
+     * @return Raíz da árvore.
      */
     public Node getRoot() {
         return root;
