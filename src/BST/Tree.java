@@ -37,7 +37,8 @@ public class Tree {
                 this.root = new Node(p);
         } else {
             // O novo maior que a raíz:
-            if (p.getUserName().compareToIgnoreCase(this.root.getKey().getUserName()) > 0) {
+            if(p.getId() > this.root.getKey().getId()){
+//            if (p.getUserName().compareToIgnoreCase(this.root.getKey().getUserName()) > 0) {
                 if (this.root.getRst() == null)
                         this.root.setRst(new Node(p));
                 else {
@@ -46,7 +47,7 @@ public class Tree {
                 this.updateHeight(this.root);
             }
             // O novo menor que a root:
-            else if (p.getUserName().compareToIgnoreCase(this.root.getKey().getUserName()) < 0) {
+            else if (p.getId() < this.root.getKey().getId()) {
                 if (this.root.getLst() == null)
                         this.root.setLst(new Node(p));
                 else {
@@ -56,6 +57,7 @@ public class Tree {
             }
             // O novo igual a root:
             else {
+                // POSSIVEL LOCAL PARA JOGAR EXCEPTION:
                 System.err.println("Usuário já existe.");
             }
         }
@@ -69,7 +71,7 @@ public class Tree {
      */
     private void insert(Node n, User p) {
         // O novo maior que a raíz:
-        if (p.getUserName().compareToIgnoreCase(n.getKey().getUserName()) > 0) {
+        if (p.getId() > this.root.getKey().getId()) {
             if (n.getRst() == null)
                     n.setRst(new Node(p));
             else {
@@ -78,7 +80,7 @@ public class Tree {
             this.updateHeight(n);
         }
         // O novo menor que a root:
-        else if (p.getUserName().compareToIgnoreCase(n.getKey().getUserName()) < 0) {
+        else if (p.getId() < this.root.getKey().getId()) {
             if (n.getLst() == null)
                     n.setLst(new Node(p));
             else {
@@ -101,7 +103,7 @@ public class Tree {
 
         if (this.root == null)
                 return false;
-        if (this.searchDepth(p.getUserName()) == null)
+        if (this.searchDepth(p.getId()) == null)
                 return false;
 
         Node node_father = null; // Pai do nó a ser removido
@@ -109,10 +111,10 @@ public class Tree {
         ArrayList<Node> list = new ArrayList<>(); // Lista para atualizar altura depois
 
         // Busca do nó a ser removido
-        while (p.getUserName().compareToIgnoreCase(node_current.getKey().getUserName()) != 0) {
+        while (p.getId()!= node_current.getKey().getId()) {
             node_father = node_current;
             list.add(node_father); // Nós do caminho são adicionados na lista
-            if (p.getUserName().compareToIgnoreCase(node_current.getKey().getUserName()) > 0)
+            if (p.getId() > node_current.getKey().getId())
                 node_current = node_current.getRst();
             else
                 node_current = node_current.getLst();			
@@ -228,7 +230,7 @@ public class Tree {
      * @param n Nó base para a recursão.
      */
     private void preOrderTraversal(Node n) {
-        System.out.println(n.getKey().getUserName());
+        System.out.println(n.getKey().getId());
         if (n.getLst() != null)
             this.preOrderTraversal(n.getLst());
         if (n.getRst() != null)
@@ -255,7 +257,7 @@ public class Tree {
             this.postOrderTraversal(n.getLst());
         if (n.getRst() != null)
             this.postOrderTraversal(n.getRst());
-        System.out.println(n.getKey().getUserName());
+        System.out.println(n.getKey().getId());
     }
 
     /**
@@ -275,7 +277,7 @@ public class Tree {
     private void inOrderTraversal(Node n) {
         if (n.getLst() != null)
             this.inOrderTraversal(n.getLst());
-        System.out.println(n.getKey().getUserName());
+        System.out.println(n.getKey().getId());
         if (n.getRst() != null)
             this.inOrderTraversal(n.getRst());
     }
@@ -283,10 +285,10 @@ public class Tree {
     /**
      * Busca da árvore em largura. Esse método consiste em realizar a busca a partir da raiz
      * sempre visitando os nós vizinhos de cada nó por onde a busca passa.
-     * @param name Nome da pessoa a ser buscada na árvore.
+     * @param id Id.
      * @return Nó do usuário que foi procurado. null se o usuário não estiver na árvore.
      */
-    public Node searchBreadth(String name) {
+    public Node searchBreadth(long id) {
         if (this.root == null)
             return null;
 
@@ -294,7 +296,7 @@ public class Tree {
         list.add(this.root);
 
         while (!list.isEmpty()) {
-            if (name.compareToIgnoreCase(list.get(0).getKey().getUserName()) == 0)
+            if (id == list.get(0).getKey().getId())
                 return list.get(0);
             if (list.get(0).getLst() != null)
                 list.add(list.get(0).getLst());
@@ -308,23 +310,23 @@ public class Tree {
 
     /**
      * Busca binaria da Arvore Binaria de Busca padrão.
-     * @param name Nome do usuário a ser buscado na árvore.
+     * @param id
      * @return Nó do usuário que foi buscado. null se o usuário não estiver na árvore.
      */
-    public Node searchDepth(String name) {
-        return this.searchDepth(this.root, name);
+    public Node searchDepth(long id) {
+        return this.searchDepth(this.root, id);
     }
 
-    private Node searchDepth(Node n, String name) {
+    private Node searchDepth(Node n, long id) {
         if (n != null) {
-            if (name.compareToIgnoreCase(n.getKey().getUserName()) == 0) {
+            if (id == n.getKey().getId()) {
                 return n;
-            } else if (name.compareToIgnoreCase(n.getKey().getUserName()) > 0) {
+            } else if (id > n.getKey().getId()) {
                 if (n.getRst() != null)
-                    return searchDepth(n.getRst(), name);
+                    return searchDepth(n.getRst(), id);
             } else {
                 if (n.getLst() != null)
-                    return searchDepth(n.getLst(), name);
+                    return searchDepth(n.getLst(), id);
             }
         }
 
@@ -348,7 +350,7 @@ public class Tree {
                 return depth;
             else {
                 depth++;
-                if (n.getKey().getUserName().compareToIgnoreCase(node_aux.getKey().getUserName()) > 0)
+                if (n.getKey().getId() > node_aux.getKey().getId())
                     node_aux = node_aux.getRst();
                 else
                     node_aux = node_aux.getLst();
@@ -415,5 +417,25 @@ public class Tree {
      */
     public void setRoot(Node root) {
         this.root = root;
+    }
+    
+    public User validateUser(String name, String pwd){
+
+        ArrayList<Node> list = new ArrayList<>();
+        list.add(this.root);
+
+        while (!list.isEmpty()) {
+            if (name.compareToIgnoreCase(list.get(0).getKey().getUserName()) == 0 &&
+                    pwd.compareTo(list.get(0).getKey().getPwd()) == 0){
+                return list.get(0).getKey();
+            }
+            if (list.get(0).getLst() != null)
+                list.add(list.get(0).getLst());
+            if (list.get(0).getRst() != null)
+                list.add(list.get(0).getRst());
+            list.remove(0);
+        }
+
+        return null;
     }
 }

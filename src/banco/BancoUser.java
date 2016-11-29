@@ -5,7 +5,7 @@
  */
 package banco;
 
-import java.util.ArrayList;
+import BST.Tree;
 import musicplayer.User;
 
 /**
@@ -13,17 +13,17 @@ import musicplayer.User;
  * @author yurialessandro
  */
 public class BancoUser {
-    public static ArrayList<User> USERS = new ArrayList<User>();
+    public static Tree USERS = new Tree();
     
     public static void addUser(User p){
-        USERS.add(p);
+        USERS.insert(p);
     }
     
     public static void remUser(User p){
         USERS.remove(p);
     }
     
-    public static ArrayList<User> getUsers(){
+    public static Tree getUsers(){
         return USERS;
     }
 }

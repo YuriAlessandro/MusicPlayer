@@ -6,6 +6,7 @@
 package musicplayer;
 
 import banco.BancoUser;
+import java.util.UUID;
 
 /**
  *
@@ -14,10 +15,12 @@ import banco.BancoUser;
 public abstract class User {
     private String userName;
     private String pwd;
+    private long id;
 
     public User(String userName, String pwd) {
         this.userName = userName;
         this.pwd = pwd;
+        this.generateId();
         BancoUser.addUser(this);
     }
 
@@ -36,5 +39,17 @@ public abstract class User {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
     
+    private void generateId(){
+        UUID uid = UUID.randomUUID();
+        this.id = Math.abs(uid.getLeastSignificantBits());
+    }
 }

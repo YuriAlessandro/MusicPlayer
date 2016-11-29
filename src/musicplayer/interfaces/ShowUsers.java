@@ -21,9 +21,9 @@ public class ShowUsers extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         
-        for(User e : BancoUser.getUsers()){
-            txtUsers.append(e.getUserName() + "[" + e.getPwd() + "] " + e.getClass().toString() + "\n");
-        }
+//        for(User e : BancoUser.getUsers()){
+//            txtUsers.append(e.getUserName() + "[" + e.getPwd() + "] " + e.getClass().toString() + "\n");
+//        }
     }
 
     /**

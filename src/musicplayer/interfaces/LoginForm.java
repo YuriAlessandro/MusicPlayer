@@ -5,8 +5,8 @@
  */
 package musicplayer.interfaces;
 
+import BST.Tree;
 import banco.BancoUser;
-import java.util.ArrayList;
 import musicplayer.User;
 import musicplayer.UserCommom;
 import musicplayer.UserVIP;
@@ -17,7 +17,7 @@ import musicplayer.UserVIP;
  */
 public class LoginForm extends javax.swing.JFrame {
     
-    ArrayList<User> USERS = BancoUser.getUsers();
+    Tree USERS = BancoUser.getUsers();
             
     /**
      * Creates new form LoginForm
@@ -25,9 +25,9 @@ public class LoginForm extends javax.swing.JFrame {
     public LoginForm() {
         initComponents();
         this.setResizable(false);
-        User admin = new UserVIP("admin", "admin");
+        User admin = new UserVIP("Admin", "Admin");
         User a = new UserCommom("YuriAlessandro", "123");
-        User b = new UserVIP("ThCezar", "456");
+//        User b = new UserVIP("ThCezar", "456");
     }
 
     /**
@@ -49,6 +49,7 @@ public class LoginForm extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         lblErrorLogin = new javax.swing.JLabel();
         txtLoginPwd = new javax.swing.JPasswordField();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -84,6 +85,13 @@ public class LoginForm extends javax.swing.JFrame {
 
         jLabel4.setBackground(new java.awt.Color(255, 0, 6));
         jLabel4.setText("JYATH MusicPlayer");
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
 
@@ -138,6 +146,8 @@ public class LoginForm extends javax.swing.JFrame {
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(btnCancel)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jButton1)
+                                            .addGap(38, 38, 38)
                                             .addComponent(btnConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -167,7 +177,8 @@ public class LoginForm extends javax.swing.JFrame {
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirm)
-                    .addComponent(btnCancel))
+                    .addComponent(btnCancel)
+                    .addComponent(jButton1))
                 .addGap(31, 31, 31))
         );
 
@@ -184,17 +195,17 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
-        for(User a : this.USERS){ 
-            if(a.getUserName().equals(txtLoginUser.getText()) && a.getPwd().equals(txtLoginPwd.getText())){
-                new MusicPlayerForm(a).setVisible(true);
-                this.setVisible(false);
-                this.dispose();
-            }else{
-                lblErrorLogin.setText("Wrong User or Password. Try again.");
-                this.txtLoginPwd.setText("");
-                this.txtLoginUser.setText("");
-            }
+        User u = USERS.validateUser(this.txtLoginUser.getText(), this.txtLoginPwd.getText());
+        if( u != null){
+            new MusicPlayerForm(u).setVisible(true);
+            this.setVisible(false);
+            this.dispose();
+        }else{
+            lblErrorLogin.setText("Wrong User or Password. Try again.");
+            this.txtLoginPwd.setText("");
+            this.txtLoginUser.setText("");
         }
+        
     }//GEN-LAST:event_btnConfirmActionPerformed
 
     private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
@@ -204,6 +215,10 @@ public class LoginForm extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         this.btnConfirmActionPerformed(evt);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        USERS.inOrderTraversal();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -243,6 +258,7 @@ public class LoginForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnConfirm;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
