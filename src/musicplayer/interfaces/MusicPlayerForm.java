@@ -6,6 +6,7 @@
 package musicplayer.interfaces;
 
 import banco.BancoMusic;
+import java.io.File;
 import javazoom.jl.player.Player;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
@@ -30,7 +32,9 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private AdvancedPlayer play;
     private final DefaultListModel l1 = new DefaultListModel();
     private User user;
-
+    private PlayMusic playMusic;
+    private Thread theadFromMusic;
+    private boolean playFromPause;
 //    private Player play;
     /**
      * Creates new form MusicPlayerForm
@@ -44,11 +48,16 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         this.user = u;
         
         if(u instanceof UserCommom){
+            this.listOfPlaylist.setEnabled(false);
             this.btnVipPanel.setEnabled(false);
             this.btnNewPlaylist.setEnabled(false);
         }
         
         this.txtUserName.setText(u.getUserName());
+        this.playFromPause = false;
+        
+        this.btnPause.setEnabled(false);
+        this.btnStop.setEnabled(false);
     }
 
     private MusicPlayerForm() {
@@ -72,7 +81,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         btnVipPanel = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnAddDir = new javax.swing.JButton();
         btnPause = new javax.swing.JButton();
         timeMusic = new javax.swing.JProgressBar();
         jSeparator3 = new javax.swing.JSeparator();
@@ -88,7 +97,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jList1 = new javax.swing.JList<>();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        listOfPlaylist = new javax.swing.JList<>();
         btnNewPlaylist = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -129,11 +138,21 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Add Directory");
+        btnAddDir.setText("Add Directory");
+        btnAddDir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddDirActionPerformed(evt);
+            }
+        });
 
         btnPause.setText("Pause");
+        btnPause.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPauseActionPerformed(evt);
+            }
+        });
 
-        btnStop.setText("Parar");
+        btnStop.setText("Stop");
         btnStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStopActionPerformed(evt);
@@ -154,7 +173,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
 
         jLabel5.setText("Playlists:");
 
-        jScrollPane3.setViewportView(jList2);
+        jScrollPane3.setViewportView(listOfPlaylist);
 
         btnNewPlaylist.setText("New Playlist");
 
@@ -232,7 +251,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                                     .addComponent(lblNameMusic, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(btnAddDir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(btnChooseFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -268,7 +287,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
-                        .addComponent(jButton3)
+                        .addComponent(btnAddDir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnChooseFile))
                     .addGroup(layout.createSequentialGroup()
@@ -310,16 +329,25 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
-        int i = listOfMusics.getSelectedIndex();
-        System.err.println(i);
-        Music m = BancoMusic.getMusics().get(i);
-        this.path = m.getPath();
-        this.lblNameMusic.setText(m.getName());
-        
-        new ThreadImpl((Runnable) play, this.path).start();
+        if(!this.playFromPause){
+            int i = listOfMusics.getSelectedIndex();
+            System.err.println(i);
+            Music m = BancoMusic.getMusics().get(i);
+            this.path = m.getPath();
+            this.lblNameMusic.setText(m.getName());
+
+            this.playMusic = new PlayMusic(this.play, this.path);
+            this.theadFromMusic = new Thread(this.playMusic);
+            this.theadFromMusic.start();            
+        }else{
+            this.theadFromMusic.resume();
+        }
         
         btnPlay.setEnabled(false);
-        btnChooseFile.setEnabled(false);
+        this.btnPause.setEnabled(true);
+        this.btnStop.setEnabled(true);
+        this.listOfMusics.setEnabled(false);
+        
     }//GEN-LAST:event_btnPlayActionPerformed
 
     private void btnVipPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVipPanelActionPerformed
@@ -327,9 +355,44 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVipPanelActionPerformed
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-//        this.play.stop();
+        this.theadFromMusic.stop();
+        this.btnPlay.setEnabled(true);
+        this.btnPause.setEnabled(true);
+        this.playFromPause = false;
+        this.listOfMusics.setEnabled(true);
 
     }//GEN-LAST:event_btnStopActionPerformed
+
+    private void btnPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseActionPerformed
+        this.theadFromMusic.suspend();
+        this.btnPlay.setEnabled(true);
+        this.btnPause.setEnabled(false);
+        this.playFromPause = true;
+    }//GEN-LAST:event_btnPauseActionPerformed
+
+    private void btnAddDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDirActionPerformed
+        JFileChooser jf = new JFileChooser();
+        jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jf.setAcceptAllFileFilterUsed(true);
+        jf.setMultiSelectionEnabled(false);
+        
+        int w = jf.showOpenDialog(this);
+        File f = jf.getSelectedFile();
+        String dirPath = f.getName();
+        
+        File[] listOfFiles = f.listFiles();
+        Music m;
+        
+        for(int i = 0; i < listOfFiles.length; i++){
+            File e = listOfFiles[i];
+            if(e.isFile() && e.getName().contains(".mp3")){
+                m = new Music(e.getName(), e.getAbsolutePath());
+                this.l1.addElement(listOfFiles[i].getName());
+            }
+        }
+        
+        this.listOfMusics.setModel(l1);
+    }//GEN-LAST:event_btnAddDirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -367,20 +430,19 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddDir;
     private javax.swing.JButton btnChooseFile;
     private javax.swing.JButton btnNewPlaylist;
     private javax.swing.JButton btnPause;
     private javax.swing.JButton btnPlay;
     private javax.swing.JButton btnStop;
     private javax.swing.JButton btnVipPanel;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JList<String> jList1;
-    private javax.swing.JList<String> jList2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
@@ -393,27 +455,34 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JLabel lblNameMusic;
     private javax.swing.JList<String> listOfMusics;
+    private javax.swing.JList<String> listOfPlaylist;
     private javax.swing.JProgressBar timeMusic;
     private javax.swing.JLabel txtUserName;
     // End of variables declaration//GEN-END:variables
-
-    private class ThreadImpl extends Thread {
-
-        public ThreadImpl(Runnable r, String string) {
-            super(r, string);
-        }
+    
+    public class PlayMusic implements Runnable{
         
+        private AdvancedPlayer play;
+        String path;
+        
+        public PlayMusic(AdvancedPlayer play, String path) {
+            this.path = path;
+            this.play = play;
+        }
+
         @Override
-        public void run(){
+        public void run() {
             try {
                 FileInputStream fis = new FileInputStream(path);
                 play = new AdvancedPlayer(fis);
-                
                 play.play();
-                //            play.wait();
+                
             } catch (JavaLayerException | FileNotFoundException ex) {
                 Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        
+        
     }
 }

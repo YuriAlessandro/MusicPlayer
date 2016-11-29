@@ -191,8 +191,8 @@ public class LoginForm extends javax.swing.JFrame {
                 this.dispose();
             }else{
                 lblErrorLogin.setText("Wrong User or Password. Try again.");
-                this.txtLoginPwd.setText(" ");
-                this.txtLoginUser.setText(" ");
+                this.txtLoginPwd.setText("");
+                this.txtLoginUser.setText("");
             }
         }
     }//GEN-LAST:event_btnConfirmActionPerformed
