@@ -6,7 +6,11 @@
 package musicplayer;
 
 import banco.BancoUser;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.UUID;
+import musicplayer.persistence.UsersPersistence;
 
 /**
  *
@@ -16,12 +20,15 @@ public abstract class User {
     private String userName;
     private String pwd;
     private long id;
+    private boolean isSave;
 
-    public User(String userName, String pwd) {
+    public User(String userName, String pwd, boolean isSave) throws IOException{
         this.userName = userName;
         this.pwd = pwd;
+        this.isSave = isSave;
         this.generateId();
-        BancoUser.addUser(this);
+        this.addOnDataBase();
+        if(!isSave) this.addOnPersistence();
     }
 
     public String getUserName() {
@@ -51,5 +58,24 @@ public abstract class User {
     private void generateId(){
         UUID uid = UUID.randomUUID();
         this.id = Math.abs(uid.getLeastSignificantBits());
+    }
+    
+    private void writeUserInFile(FileWriter file){
+        PrintWriter printUsers = new PrintWriter(file);
+        
+        printUsers.printf(this.getUserName() + " " + this.getPwd());
+        
+        if(this instanceof UserVIP){
+            printUsers.printf(" true%n");
+        }else printUsers.printf(" false%n");
+            
+    }
+    
+    private void addOnDataBase(){
+        BancoUser.addUser(this);
+    }
+
+    private void addOnPersistence() throws IOException {
+        UsersPersistence.saveUser(this);
     }
 }

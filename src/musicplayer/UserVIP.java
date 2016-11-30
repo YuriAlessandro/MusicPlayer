@@ -5,14 +5,17 @@
  */
 package musicplayer;
 
+import java.io.IOException;
+
+
 /**
  *
  * @author yurialessandro
  */
 public class UserVIP extends User{
     
-    public UserVIP(String userName, String pwd) {
-        super(userName, pwd);
+    public UserVIP(String userName, String pwd, boolean isSave) throws IOException {
+        super(userName, pwd, isSave);
     }
-    
+
 }

@@ -5,13 +5,16 @@
  */
 package musicplayer;
 
+import java.io.IOException;
+
 /**
  *
  * @author yurialessandro
  */
 public class UserCommom extends User{
 
-    public UserCommom(String userName, String pwd) {
-        super(userName, pwd);
+    public UserCommom(String userName, String pwd, boolean isSave) throws IOException {
+        super(userName, pwd, isSave);
     }
+
 }

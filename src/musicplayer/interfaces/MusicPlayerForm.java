@@ -42,7 +42,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     public MusicPlayerForm(User u){
         initComponents();
         this.setResizable(false);
-        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+//        this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         this.listOfMusics.clearSelection();
         
         this.user = u;

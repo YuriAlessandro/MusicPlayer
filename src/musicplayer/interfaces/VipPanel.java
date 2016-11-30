@@ -5,6 +5,9 @@
  */
 package musicplayer.interfaces;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import musicplayer.User;
 import musicplayer.UserCommom;
@@ -168,12 +171,24 @@ public class VipPanel extends javax.swing.JFrame {
         User temp;
         switch (boxType.getSelectedIndex()) {
             case 0:
-                temp = new UserCommom(txtCUserName.getText(), txtCUserPwd.getText());
-                txtAdd.setText("User [" + temp.getUserName() + "] added.");
+        {
+            try {
+                temp = new UserCommom(txtCUserName.getText(), txtCUserPwd.getText(), false);
+            } catch (IOException ex) {
+                Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+                txtAdd.setText("User added.");
                 break;
             case 1:
-                temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText());
-                txtAdd.setText("User VIP [" + temp.getUserName() + "] added.");
+        {
+            try {
+                temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText(), false);
+            } catch (IOException ex) {
+                Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+                txtAdd.setText("User VIP added.");
                 break;
             default:
                 txtAdd.setText("Something seems to have gone awry ...");
