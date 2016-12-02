@@ -17,11 +17,13 @@ public class Playlist {
     private ArrayList<Music> musics;
     private String name;
     private User owner;
+    private boolean saved;
 
-    public Playlist(String name, User u) {
+    public Playlist(String name, User u, boolean b) {
         this.musics = new ArrayList<>();
         this.name = name;
         this.owner = u;
+        this.saved = b;
         this.addOnBanco();
     }
 
@@ -56,5 +58,14 @@ public class Playlist {
     private void addOnBanco(){
         BancoPlaylist.addMusic(this);
     }
+
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public void setSaved(boolean saved) {
+        this.saved = saved;
+    }
+    
     
 }

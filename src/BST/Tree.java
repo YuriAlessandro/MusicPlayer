@@ -438,4 +438,24 @@ public class Tree {
 
         return null;
     }
+    
+    public User searchByName(String name){
+        if (this.root == null)
+            return null;
+
+        ArrayList<Node> list = new ArrayList<>();
+        list.add(this.root);
+
+        while (!list.isEmpty()) {
+            if (name.equals(list.get(0).getKey().getUserName()))
+                return list.get(0).getKey();
+            if (list.get(0).getLst() != null)
+                list.add(list.get(0).getLst());
+            if (list.get(0).getRst() != null)
+                list.add(list.get(0).getRst());
+            list.remove(0);
+        }
+
+        return null;
+    }
 }

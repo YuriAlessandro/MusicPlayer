@@ -15,16 +15,18 @@ public class Music {
     private String name;
     private String path;
     private boolean isSaved;
+    private boolean fromPlaylist;
 
     public Music() {
         BancoMusic.addMusic(this);
     }
 
-    public Music(String name, String path, boolean isSaved) {
+    public Music(String name, String path, boolean isSaved, boolean fromPlaylist) {
         this.name = name;
         this.path = path;
         this.isSaved = isSaved;
-      
+        this.fromPlaylist = fromPlaylist;
+        
         BancoMusic.addMusic(this);
     }
 
@@ -51,7 +53,10 @@ public class Music {
     public void setIsSaved(boolean isSaved) {
         this.isSaved = isSaved;
     }
-    
+
+    public boolean isFromPlaylist() {
+        return fromPlaylist;
+    }
     
     
 }

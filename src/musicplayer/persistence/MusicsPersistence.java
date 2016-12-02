@@ -46,7 +46,7 @@ public class MusicsPersistence {
                     data = line.trim().split("~~");
                     
                     if(data[0].equals(u.getUserName())){
-                        m = new Music(data[1], data[2], true);
+                        m = new Music(data[1], data[2], true, false);
                     }
                 }
                 
