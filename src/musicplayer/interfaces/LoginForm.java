@@ -190,7 +190,11 @@ public class LoginForm extends javax.swing.JFrame {
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
         User u = USERS.validateUser(this.txtLoginUser.getText(), this.txtLoginPwd.getText());
         if( u != null){
-            new MusicPlayerForm(u).setVisible(true);
+            try {
+                new MusicPlayerForm(u).setVisible(true);
+            } catch (IOException ex) {
+                Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
             this.setVisible(false);
             this.dispose();
         }else{

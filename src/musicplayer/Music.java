@@ -14,14 +14,17 @@ import banco.BancoMusic;
 public class Music {
     private String name;
     private String path;
+    private boolean isSaved;
 
     public Music() {
         BancoMusic.addMusic(this);
     }
 
-    public Music(String name, String path) {
+    public Music(String name, String path, boolean isSaved) {
         this.name = name;
         this.path = path;
+        this.isSaved = isSaved;
+      
         BancoMusic.addMusic(this);
     }
 
@@ -40,6 +43,15 @@ public class Music {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public boolean isIsSaved() {
+        return isSaved;
+    }
+
+    public void setIsSaved(boolean isSaved) {
+        this.isSaved = isSaved;
+    }
+    
     
     
 }

@@ -5,6 +5,7 @@
  */
 package musicplayer;
 
+import banco.BancoPlaylist;
 import java.util.ArrayList;
 
 /**
@@ -21,9 +22,39 @@ public class Playlist {
         this.musics = new ArrayList<>();
         this.name = name;
         this.owner = u;
+        this.addOnBanco();
     }
 
     public void addMusic(Music m) {
         musics.add(m);
     }
+
+    public ArrayList<Music> getMusics() {
+        return musics;
+    }
+
+    public void setMusics(ArrayList<Music> musics) {
+        this.musics = musics;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+    
+    private void addOnBanco(){
+        BancoPlaylist.addMusic(this);
+    }
+    
 }

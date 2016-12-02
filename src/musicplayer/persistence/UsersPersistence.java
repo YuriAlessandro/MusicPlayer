@@ -23,7 +23,7 @@ import musicplayer.UserVIP;
  * @author yurialessandro
  */
 public class UsersPersistence {
-    private static final String PATH = "C:\\Users\\yurialessandro\\Documents\\NetBeansProjects\\MusicPlayer\\src\\musicplayer\\persistence\\users.txt"; 
+    private static final String PATH = "src/musicplayer/persistence/persistenceDocs/users.txt"; 
     
     public static void saveUser(User u) throws IOException{
         try (BufferedWriter buffWrite = new BufferedWriter(new FileWriter(UsersPersistence.PATH, true))) {

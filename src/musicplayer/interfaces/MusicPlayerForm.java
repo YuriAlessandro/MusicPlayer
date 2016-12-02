@@ -6,11 +6,15 @@
 package musicplayer.interfaces;
 
 import banco.BancoMusic;
+import banco.BancoPlaylist;
 import java.awt.Component;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import javazoom.jl.player.Player;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -24,6 +28,7 @@ import musicplayer.Playlist;
 import musicplayer.User;
 import musicplayer.UserCommom;
 import musicplayer.UserVIP;
+import musicplayer.persistence.MusicsPersistence;
 
 /**
  *
@@ -34,16 +39,19 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private String path;
     private AdvancedPlayer play;
     private final DefaultListModel l1 = new DefaultListModel();
+    private final DefaultListModel m1 = new DefaultListModel();
     private User user;
     private PlayMusic playMusic;
     private Thread theadFromMusic;
     private boolean playFromPause;
+    private boolean playlistMode;
 //    private Player play;
     /**
      * Creates new form MusicPlayerForm
      * @param u
+     * @throws java.io.IOException
      */
-    public MusicPlayerForm(User u){
+    public MusicPlayerForm(User u) throws IOException{
         initComponents();
         this.setResizable(false);
 //        this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
@@ -59,11 +67,32 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         
         this.txtUserName.setText(u.getUserName());
         this.playFromPause = false;
+        this.playlistMode = false;
         
         this.btnPause.setEnabled(false);
         this.btnStop.setEnabled(false);
         this.playlistMusics.setEnabled(false);
         this.btnAddMusic.setEnabled(false);
+        
+        MusicsPersistence.readMusics(u);
+        
+        for(Music m : BancoMusic.MUSICS){
+            this.m1.addElement(m.getName());
+        }
+        
+        this.listOfMusics.setModel(m1);
+        
+        this.addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosing(WindowEvent e){
+                    try {
+                        MusicsPersistence.saveMusics(user);
+                    } catch (IOException ex) {
+                        Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    System.exit(0);
+                }
+            });
     }
 
     private MusicPlayerForm() {
@@ -384,20 +413,29 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
         if(!this.playFromPause){
-            int i;
-            if(listOfMusics.isEnabled()){
-                i = listOfMusics.getSelectedIndex();
+            
+            String mName;
+            if(this.listOfMusics.isEnabled()){
+                mName = this.listOfMusics.getSelectedValue();
             }else{
-                i = playlistMusics.getSelectedIndex();
+                mName = this.playlistMusics.getSelectedValue();
             }
-            System.err.println(i);
-            Music m = BancoMusic.getMusics().get(i);
-            this.path = m.getPath();
-            this.lblNameMusic.setText(m.getName());
+            
+            Music m = null;
+    
+            for(Music music : BancoMusic.MUSICS){
+                if(mName.equals(music.getName())){
+                    m = music;
+                }
+            }
+            if(m != null){
+                this.path = m.getPath();
+                this.lblNameMusic.setText(m.getName());
 
-            this.playMusic = new PlayMusic(this.play, this.path);
-            this.theadFromMusic = new Thread(this.playMusic);
-            this.theadFromMusic.start();            
+                this.playMusic = new PlayMusic(this.play, this.path);
+                this.theadFromMusic = new Thread(this.playMusic);
+                this.theadFromMusic.start();
+            }
         }else{
             this.theadFromMusic.resume();
         }
@@ -406,6 +444,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         this.btnPause.setEnabled(true);
         this.btnStop.setEnabled(true);
         this.listOfMusics.setEnabled(false);
+        this.playlistMusics.setEnabled(false);
         
     }//GEN-LAST:event_btnPlayActionPerformed
 
@@ -418,7 +457,8 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         this.btnPlay.setEnabled(true);
         this.btnPause.setEnabled(true);
         this.playFromPause = false;
-        this.listOfMusics.setEnabled(true);
+        if(!this.playlistMode) this.listOfMusics.setEnabled(true);
+        else this.playlistMusics.setEnabled(true);
 
     }//GEN-LAST:event_btnStopActionPerformed
 
@@ -445,7 +485,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         for(int i = 0; i < listOfFiles.length; i++){
             File e = listOfFiles[i];
             if(e.isFile() && e.getName().contains(".mp3")){
-                m = new Music(e.getName(), e.getAbsolutePath());
+                m = new Music(e.getName(), e.getAbsolutePath(), false);
                 this.l1.addElement(listOfFiles[i].getName());
             }
         }
@@ -457,60 +497,73 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         if(this.txtNewPName.getText().isEmpty()){
             this.txtNewPName.setText("Put a name...");
         }else{
-            UserVIP vip = (UserVIP) this.user;
-            vip.newPlaylist(this.txtNewPName.getText());
+//            UserVIP vip = (UserVIP) this.user;
+            Playlist temp = new Playlist(this.txtNewPName.getText(), this.user);
             this.txtNewPName.setText(" ");
             this.updateListOfPlaylist();
         }
     }//GEN-LAST:event_btnNewPlaylistActionPerformed
     
     private void updateListOfPlaylist(){
-        UserVIP temp = (UserVIP) this.user;
+//        UserVIP temp = (UserVIP) this.user;
         DefaultListModel p1 = new DefaultListModel();
 
-        for(Playlist p : temp.getPlaylists()){
+        for(Playlist p : BancoPlaylist.PLAYLISTS){
             p1.addElement(p.getName());
         }
         
         this.listOfPlaylist.setModel(p1);
     }
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        this.btnAddMusic.setEnabled(true);
-        this.listOfMusics.setEnabled(false);
-        this.playlistMusics.setEnabled(true);
-        this.playlistMusics.clearSelection();
-//        this.listOfMusics.setEnabled(true);
-        UserVIP vip = (UserVIP) this.user;
-//        Playlist ts;
-        String selected = this.listOfPlaylist.getSelectedValue();
-        DefaultListModel m1 = new DefaultListModel();
-        
-        for(Playlist p : vip.getPlaylists()){
-            if(p.getName().equals(selected)){
-                this.txtPName.setText(p.getName());
-                for(Music m : p.getMusics()){
-                    m1.addElement(m.getName());
+        if(this.playlistMusics.getModel().getSize() != 0){
+            if(!this.playlistMode){
+                this.playlistMode = true;
+                this.listOfPlaylist.setEnabled(false);
+                this.listOfMusics.setEnabled(false);
+                this.btnAddMusic.setEnabled(true);
+                this.playlistMusics.clearSelection();
+                this.playlistMusics.setEnabled(true);
+
+                String selected = this.listOfPlaylist.getSelectedValue();
+                DefaultListModel m1 = new DefaultListModel();
+
+                for(Playlist p : BancoPlaylist.PLAYLISTS){
+                    if(p.getName().equals(selected)){
+                        this.txtPName.setText(p.getName());
+                        for(Music m : p.getMusics()){
+                            m1.addElement(m.getName());
+                        }
+                    }
                 }
+                this.playlistMusics.setModel(m1);
+
+                this.btnSelect.setText("Deselect");
+            }else{
+                this.playlistMode = false;
+                this.playlistMusics.setEnabled(false);
+                this.listOfMusics.setEnabled(true);
+                this.listOfPlaylist.setEnabled(true);
+                this.btnAddMusic.setEnabled(false);
+                this.btnSelect.setText("Select");
             }
         }
-        this.listOfMusics.setModel(m1);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnAddMusicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMusicActionPerformed
         UserVIP vip = (UserVIP) this.user;
 //        Playlist ts;
         String selected = this.listOfPlaylist.getSelectedValue();
-        DefaultListModel m1 = new DefaultListModel();
         
-        for(Playlist p : vip.getPlaylists()){
+        
+        for(Playlist p : BancoPlaylist.PLAYLISTS){
             if(p.getName().equals(selected)){
                Music temp = this.selectAMusic();
                p.addMusic(temp);
-               m1.addElement(temp.getName());
+               this.m1.addElement(temp.getName());
             }
         }
         
-        this.playlistMusics.setModel(m1);
+        this.playlistMusics.setModel(this.m1);
     }//GEN-LAST:event_btnAddMusicActionPerformed
 
     /**
@@ -604,8 +657,10 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
-        
+   
     }
+    
+   private void makePersistenceOnClose() throws IOException{
+       MusicsPersistence.saveMusics(this.user);
+   }
 }
