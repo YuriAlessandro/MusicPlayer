@@ -5,6 +5,7 @@
  */
 package musicplayer.interfaces;
 
+import exceptions.UserNameWithSpaceException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -173,7 +174,13 @@ public class VipPanel extends javax.swing.JFrame {
             case 0:
         {
             try {
-                temp = new UserCommom(txtCUserName.getText(), txtCUserPwd.getText(), false);
+                try {
+                    temp = new UserCommom(txtCUserName.getText(), txtCUserPwd.getText(), false);
+                } catch (UserNameWithSpaceException ex) {
+                   txtAdd.setText("User name cannot have spaces!");
+                   txtCUserName.setText("");
+                   txtCUserPwd.setText("");
+                }
             } catch (IOException ex) {
                 Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -183,7 +190,13 @@ public class VipPanel extends javax.swing.JFrame {
             case 1:
         {
             try {
-                temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText(), false);
+                try {
+                    temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText(), false);
+                } catch (UserNameWithSpaceException ex) {
+                    txtAdd.setText("User name cannot have spaces!");
+                    txtCUserName.setText("");
+                    txtCUserPwd.setText("");
+                }
             } catch (IOException ex) {
                 Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
             }

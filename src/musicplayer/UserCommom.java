@@ -1,5 +1,6 @@
 package musicplayer;
 
+import exceptions.UserNameWithSpaceException;
 import java.io.IOException;
 
 /**
@@ -15,8 +16,9 @@ public class UserCommom extends User{
      * @param pwd Senha do usuário
      * @param isSave True, se está salvo na persistência
      * @throws IOException Erro na leitura/escrita de arquivos
+     * @throws exceptions.UserNameWithSpaceException
      */
-    public UserCommom(String userName, String pwd, boolean isSave) throws IOException {
+    public UserCommom(String userName, String pwd, boolean isSave) throws IOException, UserNameWithSpaceException {
         super(userName, pwd, isSave);
     }
 

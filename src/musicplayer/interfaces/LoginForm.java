@@ -7,6 +7,7 @@ package musicplayer.interfaces;
 
 import BST.Tree;
 import banco.BancoUser;
+import exceptions.UserNameWithSpaceException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +28,7 @@ public class LoginForm extends javax.swing.JFrame {
      * Creates new form LoginForm
      * @throws java.io.IOException
      */
-    public LoginForm() throws IOException {
+    public LoginForm() throws IOException, UserNameWithSpaceException {
         initComponents();
         this.setResizable(false);
         User admin = new UserVIP("admin", "admin", true);
@@ -243,6 +244,8 @@ public class LoginForm extends javax.swing.JFrame {
                 try {
                     new LoginForm().setVisible(true);
                 } catch (IOException ex) {
+                    Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UserNameWithSpaceException ex) {
                     Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

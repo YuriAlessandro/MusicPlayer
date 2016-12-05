@@ -1,5 +1,6 @@
 package musicplayer;
 
+import exceptions.UserNameWithSpaceException;
 import java.io.IOException;
 
 
@@ -16,8 +17,9 @@ public class UserVIP extends User{
      * @param pwd
      * @param isSave
      * @throws IOException 
+     * @throws exceptions.UserNameWithSpaceException 
      */
-    public UserVIP(String userName, String pwd, boolean isSave) throws IOException {
+    public UserVIP(String userName, String pwd, boolean isSave) throws IOException, UserNameWithSpaceException {
         super(userName, pwd, isSave);
     }
 

@@ -5,12 +5,15 @@
  */
 package musicplayer.persistence;
 
+import exceptions.UserNameWithSpaceException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import musicplayer.User;
 import musicplayer.UserCommom;
 import musicplayer.UserVIP;
@@ -63,11 +66,19 @@ public class UsersPersistence {
                     
                     // Verifica se é um usuário VIP
                     if(data[2].equals("true")){
-                        u = new UserVIP(data[0], data[1], true);
+                        try {
+                            u = new UserVIP(data[0], data[1], true);
 //                        BancoUser.addUser(u);
+                        } catch (UserNameWithSpaceException ex) {
+                            Logger.getLogger(UsersPersistence.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }else{
-                        u = new UserCommom(data[0], data[1], true);
+                        try {
+                            u = new UserCommom(data[0], data[1], true);
 //                        BancoUser.addUser(u);
+                        } catch (UserNameWithSpaceException ex) {
+                            Logger.getLogger(UsersPersistence.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
                 

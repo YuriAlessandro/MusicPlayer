@@ -2,6 +2,7 @@ package musicplayer;
 
 import DAO.UserDAO;
 import banco.BancoUser;
+import exceptions.UserNameWithSpaceException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,8 +27,14 @@ public abstract class User {
      * @param pwd Senha do usuário
      * @param isSave True, se está salvo na persistência
      * @throws IOException Erro na leitura/escrita de arquivos
+     * @throws exceptions.UserNameWithSpaceException
      */
-    public User(String userName, String pwd, boolean isSave) throws IOException{
+    public User(String userName, String pwd, boolean isSave) throws IOException, UserNameWithSpaceException{
+        if(userName.contains(" ")){
+            System.out.println("ENTROU");
+            throw new UserNameWithSpaceException("User name cannot have spaces on its name!");
+
+        }
         this.userName = userName;
         this.pwd = pwd;
         this.isSave = isSave;
