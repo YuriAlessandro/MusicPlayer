@@ -23,8 +23,8 @@ public class Music {
      * Construtor da classe música.
      * @param name Nome da música.
      * @param path Diretório da música.
-     * @param isSaved True, se música já salva na persistência.
-     * @param fromPlaylist True, se música é de uma playlist.
+     * @param isSaved True, se a música já está salva na persistência.
+     * @param fromPlaylist True, se a música é de uma playlist.
      */
     public Music(String name, String path, boolean isSaved, boolean fromPlaylist) {
         this.name = name;
@@ -42,32 +42,32 @@ public class Music {
     }
     
     /**
-     * 
-     * @param name 
+     * Definir novo nome para a música
+     * @param name Novo nome da música.
      */
     public void setName(String name) {
         this.name = name;
     }
     
     /**
-     * 
-     * @return 
+     * Obter o caminho da música.
+     * @return String contendo o caminho da música.
      */
     public String getPath() {
         return path;
     }
     
     /**
-     * 
-     * @param path 
+     * Deifinir novo caminho da música.
+     * @param path Novo caminho da música.
      */
     public void setPath(String path) {
         this.path = path;
     }
     
     /**
-     * 
-     * @return 
+     * Obter o estado da música (se ela está salva na persistência)
+     * @return True, se a música já está salva na persistência.
      */
     public boolean isSaved() {
         return saved;

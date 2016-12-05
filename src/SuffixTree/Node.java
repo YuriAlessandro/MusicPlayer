@@ -12,6 +12,7 @@ package SuffixTree;
  */
 public class Node {
     private boolean is_word; // Indica se o nó é o último caractere de uma palavra
+    // Esse atributo é protected pois ele precisa ser acessado por SuffixTree
     protected Node[] next; // Array de nós
     
     /**

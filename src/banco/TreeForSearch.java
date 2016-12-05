@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package banco;
 
 import SuffixTree.SuffixTree;
@@ -10,7 +5,8 @@ import java.util.ArrayList;
 
 /**
  *
- * @author yurialessandro
+ * @author Yuri Alessandro Martins
+ * @author Thiago César M. D. de Lucena
  */
 public class TreeForSearch {
     private static final SuffixTree TREE = new SuffixTree();

@@ -8,6 +8,7 @@ import java.util.HashMap;
  * que armazena a raiz da árvore. Além disso, há dois hash maps que são utilizados para 
  * armazenar o alfabeto da árvore, sendo um deles para mapear cada caractere possível do 
  * alfabeto para um número inteiro (índice), e o outro para fazer o mesmo mapeamento de forma inversa.
+ * Há ainda um ArrayList utilizado para armazenar os resultado da última busca realizada.
  * @author Yuri Alessandro Martins
  * @author Thiago César M. D. de 
  * @see Node
@@ -64,10 +65,10 @@ public class SuffixTree {
     }
     /**
      * Metódo de busca para encontrar palavras que começam com determinada sequência 
-     * de caracteres. Em caso de sucesso, a busca exibe na tela todas as palavras da árvore 
-     * que iniciam com a palavra passada como parâmetro.
-     * @param word Palavra que representa a sequência de caracteres que se deseja procurar.
-     * @return 
+     * de caracteres. Em caso de sucesso, a busca retorna um ArrayList contendo os 
+     * resultados da busca.
+     * @param word Palavra que representa o sufixo que se deseja procurar.
+     * @return Um ArrayList contendo o resultado da busca.
      */
     public ArrayList<String> search(String word){
         this.search_results.clear();
@@ -86,7 +87,7 @@ public class SuffixTree {
             node = node.next[alphabet.get(word.charAt(index++))];
         }
         
-        // Caso não haja nenhuma elemnto na árvore tendo a palavra como sufixo 
+        // Caso não haja nenhum elemento na árvore tendo a palavra como sufixo 
         if (index < word.length() && node.next[alphabet.get(word.charAt(index))] == null){
             System.out.println("ENTROU");
             return null;
@@ -94,37 +95,35 @@ public class SuffixTree {
             
         
         
-            
-        // Right now, node contains the last character in tree that matches with a substring of word
-        /* Examples:
+        // Nesse momento, node contém o último caractere da árvore que corresponde com uma substring da palavra
+        /* Exemplos:
         
-            Tree has: ABCD
+            Árvore tem: ABCD
         
-            Word is: ABCD
-            Node is: D
-            Index is: 4
+            Palavra procurada: ABCD
+            Node: D
+            Index: 4
         
-            Word is: ABC
-            Node is: C
-            Index is: 3
+            Palavra procurada: ABC
+            Node: C
+            Index: 3
         
-            Word is: ABCDEF
-            Node is: D
-            Index is: 4
+            Palavra procurada: ABCDEF
+            Node: D
+            Index: 4
          */
-        
         
         if(index < word.length() )
             word = word.substring(0, index);
         
         
-        // Chamada do método privado que imprime as palavras da busca
+        // Chamada do método privado que coloca os resultados da busca eno ArrayList search_results
         this.printSearch(node, word);
         return this.search_results;
     }
     /**
-     * Método que imprime os resultados da busca, ou seja, todas as palavras na árvore 
-     * que começam com determinado sufixo. Funciona de maneira recursiva.
+     * Método que coloca no ArrayList search_results os resultado da busca, ou seja,
+     * todas as palavras na árvore que começam com determinado sufixo. Funciona de maneira recursiva.
      * @param node Nó que representa algum caractere de uma palavra que possui o sufixo procurado na busca.
      * @param word Palavra a ser impressa caso o nó represente o fim de uma palavra na árvore.
      */
