@@ -24,7 +24,8 @@ import musicplayer.UserVIP;
 
 /**
  *
- * @author yurialessandro
+ * @author Yuri Alessandro Martins
+ * @author Thiago
  */
 public class PlaylistPersistence {
 //    private static String PATH = "src/musicplayer/persistence/persistenceDocs/";

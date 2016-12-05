@@ -403,12 +403,13 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnVipPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtUserName)
-                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtUserName)
+                        .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -786,22 +787,43 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private javax.swing.JLabel txtUserName;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Classe auxiliar da thread para tocar a música.
+     */
     public class PlayMusic implements Runnable {
 
         private AdvancedPlayer play;
         String path;
-
+        
+        /**
+         * Construtor da classe
+         * @param play Player que irá rodar a música
+         * @param path Caminho para a música
+         */
         public PlayMusic(AdvancedPlayer play, String path) {
             this.path = path;
             this.play = play;
         }
 
         @Override
+        /**
+         * Roda a thread que irá tocar a música.
+         */
         public void run() {
+            // Tenta abrir o arquivo mp3 da música.
             try {
+                /*
+                Cria um novo arquivo (que a JLayer aceita para rodar) a partir
+                do diretório da música
+                */
                 FileInputStream fis = new FileInputStream(path);
+                // Inicializa o player
                 play = new AdvancedPlayer(fis);
 //                moveProgressBar();
+                /*
+                Toca a música 
+                    Nota: a thread fica parada até ela acabar)
+                */
                 play.play();
 
             } catch (JavaLayerException | FileNotFoundException ex) {
@@ -811,10 +833,13 @@ public class MusicPlayerForm extends javax.swing.JFrame {
 
     }
 
-    private void makePersistenceOnClose() throws IOException {
-        MusicsPersistence.saveMusics(this.user);
-    }
-
+//    private void makePersistenceOnClose() throws IOException {
+//        MusicsPersistence.saveMusics(this.user);
+//    }
+    
+    /**
+     * Evento para tratar a busca auto-completável.
+     */
     private class customKeyListener implements KeyListener {
 
         private String search = "";
@@ -825,15 +850,19 @@ public class MusicPlayerForm extends javax.swing.JFrame {
 
         @Override
         public void keyPressed(KeyEvent ke) {
+            // Verifica a tecla pressionada
             int a = ke.getKeyCode();
+            // Verifica as teclas que devem ser analisadas pela busca
             ArrayList<Integer> keys = new ArrayList<>();
             keys.add(KeyEvent.VK_SPACE);
             keys.add(KeyEvent.VK_BACK_SPACE);
             keys.add(KeyEvent.VK_MINUS);
 //                keys.add(KeyEvent.VK_);
-
+            
+            // Se for um das teclas permitidas
             if ((a > 47 && a < 59) || (a > 64 && a < 91) || keys.contains(a)) {
                 DefaultListModel m = new DefaultListModel();
+                // Se for a tecla backspace
                 if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     if (search.length() != 0) {
                         this.search = search.substring(0, search.length() - 1);
@@ -875,8 +904,4 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             return search;
         }
     }
-
-//    private void updateMusicList() {
-//
-//    }
 }

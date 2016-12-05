@@ -33,27 +33,51 @@ public abstract class User {
         this.addOnDataBase();
         if(!isSave) this.addOnPersistence();
     }
-
+    
+    /**
+     * 
+     * @return 
+     */
     public String getUserName() {
         return userName;
     }
-
+    
+    /**
+     * 
+     * @param userName 
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
+    
+    /**
+     * 
+     * @return 
+     */
     public String getPwd() {
         return pwd;
     }
-
+    
+    /**
+     * 
+     * @param pwd 
+     */
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
-
+    
+    /**
+     * 
+     * @return 
+     */
     public long getId() {
         return id;
     }
-
+    
+    /**
+     * 
+     * @param id 
+     */
     public void setId(long id) {
         this.id = id;
     }
@@ -66,6 +90,10 @@ public abstract class User {
         this.id = Math.abs(uid.getLeastSignificantBits());
     }
     
+    /**
+     * 
+     * @param file  
+     */
     private void writeUserInFile(FileWriter file){
         PrintWriter printUsers = new PrintWriter(file);
         
@@ -77,6 +105,10 @@ public abstract class User {
             
     }
     
+    // Retirar daqui pelo amor de Deus.
+    /**
+     * Adiciona um Usuário no Banco
+     */
     private void addOnDataBase(){
         BancoUser.addUser(this);
     }
