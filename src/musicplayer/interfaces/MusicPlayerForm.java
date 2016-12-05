@@ -5,9 +5,14 @@
  */
 package musicplayer.interfaces;
 
+import SuffixTree.SuffixTree;
 import banco.BancoMusic;
 import banco.BancoPlaylist;
+import banco.TreeForSearch;
 import java.awt.Component;
+import java.awt.List;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -15,6 +20,7 @@ import javazoom.jl.player.Player;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -36,7 +42,7 @@ import musicplayer.persistence.PlaylistPersistence;
  * @author yurialessandro
  */
 public class MusicPlayerForm extends javax.swing.JFrame {
-    
+
     private String path;
     private AdvancedPlayer play;
     private final DefaultListModel modelListMusics = new DefaultListModel();
@@ -47,53 +53,63 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private Thread theadFromMusic;
     private boolean playFromPause;
     private boolean playlistMode;
+    private ArrayList<String> searchList;
+    private boolean wasOpened;
+//    private SuffixTree treeMusics;
 //    private Player play;
+    
     /**
      * Creates new form MusicPlayerForm
+     *
      * @param u
      * @throws java.io.IOException
      */
-    public MusicPlayerForm(User u) throws IOException{
+    public MusicPlayerForm(User u) throws IOException {
         initComponents();
+        this.searchList = new ArrayList<>();
+//        this.treeMusics = new SuffixTree();
         this.setResizable(false);
 //        this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 //        this.listOfMusics.clearSelection();
-        
+
         this.user = u;
-        
-        if(u instanceof UserCommom){
+
+        if (u instanceof UserCommom) {
             this.btnVipPanel.setEnabled(false);
             this.btnNewPlaylist.setEnabled(false);
             this.txtPName.setEnabled(false);
         }
-        
+
         this.txtUserName.setText(u.getUserName());
         this.playFromPause = false;
         this.playlistMode = false;
-        
+
         this.btnPause.setEnabled(false);
         this.btnStop.setEnabled(false);
         this.playlistMusics.setEnabled(false);
         this.btnAddMusic.setEnabled(false);
         
-        MusicsPersistence.readMusics(u);
-        PlaylistPersistence.readPlaylists();
-        
-        for(Music m : BancoMusic.MUSICS){
-            if(!m.isFromPlaylist())
-                this.modelListMusics.addElement(m.getName());
-        }
-        
-        for(Playlist p : BancoPlaylist.PLAYLISTS){
-            this.modelPlaylists.addElement(p.getName());
-        }
-        
-        this.listOfPlaylist.setModel(this.modelPlaylists);
-        this.listOfMusics.setModel(this.modelListMusics);
-        
-        this.addWindowListener(new WindowAdapter(){
+        if(!wasOpened){
+            System.err.println("entrou");
+            MusicsPersistence.readMusics(u);
+            PlaylistPersistence.readPlaylists();
+
+            for (Music m : BancoMusic.MUSICS) {
+                if (!m.isFromPlaylist()) {
+                    this.modelListMusics.addElement(m.getName());
+                }
+            }
+
+            for (Playlist p : BancoPlaylist.PLAYLISTS) {
+                this.modelPlaylists.addElement(p.getName());
+            }
+
+            this.listOfPlaylist.setModel(this.modelPlaylists);
+            this.listOfMusics.setModel(this.modelListMusics);
+            
+            this.addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosing(WindowEvent e){
+                public void windowClosing(WindowEvent e) {
                     try {
                         MusicsPersistence.saveMusics(user);
                         PlaylistPersistence.savePlaylists();
@@ -103,6 +119,8 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                     System.exit(0);
                 }
             });
+        }
+
     }
 
     private MusicPlayerForm() {
@@ -128,11 +146,10 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         btnVipPanel = new javax.swing.JButton();
         btnAddDir = new javax.swing.JButton();
         btnPause = new javax.swing.JButton();
-        timeMusic = new javax.swing.JProgressBar();
+        barTimeMusic = new javax.swing.JProgressBar();
         jSeparator3 = new javax.swing.JSeparator();
         btnStop = new javax.swing.JButton();
         txtUserName = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -145,9 +162,12 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         listOfPlaylist = new javax.swing.JList<>();
         btnNewPlaylist = new javax.swing.JButton();
         btnAddMusic = new javax.swing.JButton();
-        btnSelect = new javax.swing.JButton();
         txtNewPName = new javax.swing.JTextField();
-        jTextField1 = new javax.swing.JTextField();
+        btnSelect = new javax.swing.JButton();
+        lblPlaylistOwner = new javax.swing.JLabel();
+        searchBar = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
 
@@ -175,7 +195,10 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 504, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,8 +240,6 @@ public class MusicPlayerForm extends javax.swing.JFrame {
 
         txtUserName.setText("name");
 
-        jLabel4.setText("User:");
-
         jLabel3.setText("Songs:");
 
         jScrollPane1.setViewportView(listOfMusics);
@@ -243,6 +264,13 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             }
         });
 
+        txtNewPName.setText("Playlist name...");
+        txtNewPName.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtNewPNameFocusGained(evt);
+            }
+        });
+
         btnSelect.setText("Select");
         btnSelect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -264,7 +292,10 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                     .addComponent(txtPName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAddMusic, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                    .addComponent(btnSelect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnSelect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(lblPlaylistOwner, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -284,21 +315,37 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblPlaylistOwner, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnSelect)
-                            .addComponent(txtNewPName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtNewPName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAddMusic))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnAddMusic)
-                            .addComponent(btnNewPlaylist)))
+                            .addComponent(btnNewPlaylist)
+                            .addComponent(btnSelect)))
                     .addComponent(jScrollPane1)))
         );
 
-        jTextField1.setText("Search music...");
+        searchBar.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                searchBarFocusGained(evt);
+            }
+        });
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/musicplayer/interfaces/search _12.png"))); // NOI18N
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/musicplayer/interfaces/logout_22.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -311,23 +358,12 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
             .addComponent(jSeparator2)
-            .addComponent(timeMusic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(barTimeMusic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator3)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblNameMusic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnVipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField1)
-                        .addGap(39, 39, 39)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtUserName)
-                        .addGap(24, 24, 24))
+                    .addComponent(lblNameMusic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -343,7 +379,18 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                                     .addComponent(btnAddDir, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(31, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnVipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1)
+                        .addGap(4, 4, 4)
+                        .addComponent(searchBar)
+                        .addGap(2, 2, 2)
+                        .addComponent(txtUserName)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
+                        .addGap(10, 10, 10))))
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -354,10 +401,11 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnVipPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVipPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtUserName)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,7 +417,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblNameMusic, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -379,7 +427,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                     .addComponent(btnPause)
                     .addComponent(btnStop, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addComponent(timeMusic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(barTimeMusic, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -394,16 +442,17 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jf.setMultiSelectionEnabled(false);
         int choose = jf.showOpenDialog(this);
         Music temp = null;
-        
-        if(choose == JFileChooser.APPROVE_OPTION){    
+
+        if (choose == JFileChooser.APPROVE_OPTION) {
             temp = new Music(jf.getSelectedFile().getName(), jf.getSelectedFile().getPath(), false, false);
+            TreeForSearch.insert(temp.getName());
         }
-        
+
         this.modelListMusics.addElement(temp.getName());
         listOfMusics.setModel(this.modelListMusics);
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
-    private Music selectAMusic(){
+    private Music selectAMusic() {
         JFileChooser jf = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3 Songs", "mp3");
         jf.addChoosableFileFilter(filter);
@@ -411,33 +460,33 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jf.setMultiSelectionEnabled(false);
         int choose = jf.showOpenDialog(this);
         Music temp = new Music();
-        
-        if(choose == JFileChooser.APPROVE_OPTION){    
+
+        if (choose == JFileChooser.APPROVE_OPTION) {
             temp.setName(jf.getSelectedFile().getName());
             temp.setPath(jf.getSelectedFile().getPath());
         }
-        
+
         return temp;
     }
-    
+
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
-        if(!this.playFromPause){
-            
+        if (!this.playFromPause) {
+
             String mName;
-            if(this.listOfMusics.isEnabled()){
+            if (this.listOfMusics.isEnabled()) {
                 mName = this.listOfMusics.getSelectedValue();
-            }else{
+            } else {
                 mName = this.playlistMusics.getSelectedValue();
             }
-            
+
             Music m = null;
-    
-            for(Music music : BancoMusic.MUSICS){
-                if(mName.equals(music.getName())){
+
+            for (Music music : BancoMusic.MUSICS) {
+                if (mName.equals(music.getName())) {
                     m = music;
                 }
             }
-            if(m != null){
+            if (m != null) {
                 this.path = m.getPath();
                 this.lblNameMusic.setText("Now playing " + m.getName());
 
@@ -445,16 +494,16 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 this.theadFromMusic = new Thread(this.playMusic);
                 this.theadFromMusic.start();
             }
-        }else{
+        } else {
             this.theadFromMusic.resume();
         }
-        
+
         btnPlay.setEnabled(false);
         this.btnPause.setEnabled(true);
         this.btnStop.setEnabled(true);
         this.listOfMusics.setEnabled(false);
         this.playlistMusics.setEnabled(false);
-        
+
     }//GEN-LAST:event_btnPlayActionPerformed
 
     private void btnVipPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVipPanelActionPerformed
@@ -467,8 +516,11 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         this.btnPause.setEnabled(true);
         this.playFromPause = false;
         this.lblNameMusic.setText("");
-        if(!this.playlistMode) this.listOfMusics.setEnabled(true);
-        else this.playlistMusics.setEnabled(true);
+        if (!this.playlistMode) {
+            this.listOfMusics.setEnabled(true);
+        } else {
+            this.playlistMusics.setEnabled(true);
+        }
 
     }//GEN-LAST:event_btnStopActionPerformed
 
@@ -484,98 +536,122 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jf.setAcceptAllFileFilterUsed(true);
         jf.setMultiSelectionEnabled(false);
-        
+
         int w = jf.showOpenDialog(this);
         File f = jf.getSelectedFile();
         String dirPath = f.getName();
-        
+
         File[] listOfFiles = f.listFiles();
         Music m;
-             
-        for(int i = 0; i < listOfFiles.length; i++){
+
+        for (int i = 0; i < listOfFiles.length; i++) {
             File e = listOfFiles[i];
-            if(e.isFile() && e.getName().contains(".mp3")){
+            if (e.isFile() && e.getName().contains(".mp3")) {
                 m = new Music(e.getName(), e.getAbsolutePath(), false, false);
+                TreeForSearch.insert(m.getName());
                 this.modelListMusics.addElement(listOfFiles[i].getName());
             }
         }
-        
+
         this.listOfMusics.setModel(this.modelListMusics);
     }//GEN-LAST:event_btnAddDirActionPerformed
 
     private void btnNewPlaylistActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewPlaylistActionPerformed
-        if(this.txtNewPName.getText().isEmpty()){
+        if (this.txtNewPName.getText().isEmpty()) {
             this.txtNewPName.setText("Put a name...");
-        }else{
+        } else {
 //            UserVIP vip = (UserVIP) this.user;
             Playlist temp = new Playlist(this.txtNewPName.getText(), this.user, false);
             this.txtNewPName.setText("");
             this.updateListOfPlaylist();
         }
     }//GEN-LAST:event_btnNewPlaylistActionPerformed
-    
-    private void updateListOfPlaylist(){
+
+    private void updateListOfPlaylist() {
 //        UserVIP temp = (UserVIP) this.user;
         DefaultListModel p1 = new DefaultListModel();
 
-        for(Playlist p : BancoPlaylist.PLAYLISTS){
+        for (Playlist p : BancoPlaylist.PLAYLISTS) {
             p1.addElement(p.getName());
         }
-        
+
         this.listOfPlaylist.setModel(p1);
     }
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
 //        if(this.playlistMusics.getModel().getSize() != 0){
-            if(!this.playlistMode){
-                this.playlistMode = true;
-                this.listOfPlaylist.setEnabled(false);
-                this.listOfMusics.setEnabled(false);
-                this.playlistMusics.clearSelection();
-                this.playlistMusics.setEnabled(true);
+        if (!this.playlistMode) {
+            this.playlistMode = true;
+            this.listOfPlaylist.setEnabled(false);
+            this.listOfMusics.setEnabled(false);
+            this.playlistMusics.clearSelection();
+            this.playlistMusics.setEnabled(true);
 
-                String selected = this.listOfPlaylist.getSelectedValue();
-                DefaultListModel model = new DefaultListModel();
+            String selected = this.listOfPlaylist.getSelectedValue();
+            DefaultListModel model = new DefaultListModel();
 
-                for(Playlist p : BancoPlaylist.PLAYLISTS){
-                    if(p.getName().equals(selected)){
-                        this.txtPName.setText(p.getName());
-                        for(Music m : p.getMusics()){
-                            model.addElement(m.getName());
-                        }
-                        
-                        if(this.user.getUserName().equals(p.getOwner().getUserName())){
-                            this.btnAddMusic.setEnabled(true);
-                        }
+            for (Playlist p : BancoPlaylist.PLAYLISTS) {
+                if (p.getName().equals(selected)) {
+                    this.txtPName.setText(p.getName());
+                    for (Music m : p.getMusics()) {
+                        model.addElement(m.getName());
+                    }
+                    this.lblPlaylistOwner.setText(p.getOwner().getUserName() + "'s playlist");
+                    if (this.user.getUserName().equals(p.getOwner().getUserName())) {
+                        this.btnAddMusic.setEnabled(true);
                     }
                 }
-                this.playlistMusics.setModel(model);
+            }
+            this.playlistMusics.setModel(model);
 
-                this.btnSelect.setText("Deselect");
-            }else{
-                this.playlistMode = false;
-                this.modelListPlaylistMusics.clear();
-                this.playlistMusics.setEnabled(false);
-                this.listOfMusics.setEnabled(true);
-                this.listOfPlaylist.setEnabled(true);
-                this.btnAddMusic.setEnabled(false);
-                this.btnSelect.setText("Select");
+            this.btnSelect.setText("Deselect");
+        } else {
+            this.playlistMode = false;
+            this.modelListPlaylistMusics.clear();
+            this.playlistMusics.setEnabled(false);
+            this.listOfMusics.setEnabled(true);
+            this.listOfPlaylist.setEnabled(true);
+            this.btnAddMusic.setEnabled(false);
+            this.btnSelect.setText("Select");
 //            }
         }
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnAddMusicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddMusicActionPerformed
         String selected = this.listOfPlaylist.getSelectedValue();
-        
-        for(Playlist p : BancoPlaylist.PLAYLISTS){
-            if(p.getName().equals(selected)){
-               Music temp = this.selectAMusic();
-               p.addMusic(temp);
-               this.modelListPlaylistMusics.addElement(temp.getName());
+
+        for (Playlist p : BancoPlaylist.PLAYLISTS) {
+            if (p.getName().equals(selected)) {
+                Music temp = this.selectAMusic();
+                p.addMusic(temp);
+                this.modelListPlaylistMusics.addElement(temp.getName());
             }
         }
-        
+
         this.playlistMusics.setModel(this.modelListPlaylistMusics);
     }//GEN-LAST:event_btnAddMusicActionPerformed
+
+    private void searchBarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchBarFocusGained
+//        String actualSearch = "";
+//        this.searchBar.setText("");
+        customKeyListener k1 = new customKeyListener();
+        this.searchBar.addKeyListener(k1);
+    }//GEN-LAST:event_searchBarFocusGained
+
+    private void txtNewPNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNewPNameFocusGained
+        this.txtNewPName.setText("");
+    }//GEN-LAST:event_txtNewPNameFocusGained
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.wasOpened = true;
+        try {
+            new LoginForm().setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.setVisible(false);
+        this.dispose();
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -613,6 +689,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar barTimeMusic;
     private javax.swing.JButton btnAddDir;
     private javax.swing.JButton btnAddMusic;
     private javax.swing.JButton btnChooseFile;
@@ -622,9 +699,10 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private javax.swing.JButton btnSelect;
     private javax.swing.JButton btnStop;
     private javax.swing.JButton btnVipPanel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
@@ -636,22 +714,22 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblNameMusic;
+    private javax.swing.JLabel lblPlaylistOwner;
     private javax.swing.JList<String> listOfMusics;
     private javax.swing.JList<String> listOfPlaylist;
     private javax.swing.JList<String> playlistMusics;
-    private javax.swing.JProgressBar timeMusic;
+    private javax.swing.JTextField searchBar;
     private javax.swing.JTextField txtNewPName;
     private javax.swing.JLabel txtPName;
     private javax.swing.JLabel txtUserName;
     // End of variables declaration//GEN-END:variables
-    
-    public class PlayMusic implements Runnable{
-        
+
+    public class PlayMusic implements Runnable {
+
         private AdvancedPlayer play;
         String path;
-        
+
         public PlayMusic(AdvancedPlayer play, String path) {
             this.path = path;
             this.play = play;
@@ -662,16 +740,83 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             try {
                 FileInputStream fis = new FileInputStream(path);
                 play = new AdvancedPlayer(fis);
+//                moveProgressBar();
                 play.play();
-                
+
             } catch (JavaLayerException | FileNotFoundException ex) {
                 Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-   
+
     }
-    
-   private void makePersistenceOnClose() throws IOException{
-       MusicsPersistence.saveMusics(this.user);
-   }
+
+    private void makePersistenceOnClose() throws IOException {
+        MusicsPersistence.saveMusics(this.user);
+    }
+
+    private class customKeyListener implements KeyListener {
+
+        private String search = "";
+
+        @Override
+        public void keyTyped(KeyEvent ke) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent ke) {
+            int a = ke.getKeyCode();
+            ArrayList<Integer> keys = new ArrayList<>();
+            keys.add(KeyEvent.VK_SPACE);
+            keys.add(KeyEvent.VK_BACK_SPACE);
+            keys.add(KeyEvent.VK_MINUS);
+//                keys.add(KeyEvent.VK_);
+
+            
+            if ((a > 47 && a < 59) || (a > 64 && a < 91) || keys.contains(a)) {
+                DefaultListModel m = new DefaultListModel();
+                if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    if (search.length() != 0) {
+                        this.search = search.substring(0, search.length() - 1);
+                        System.out.println(search.length());
+                        if(search.length() == 0){
+                            searchList = null;
+                            listOfMusics.setModel(modelListMusics);
+                        }
+                    }
+                } else {
+                    searchList = null;
+                    this.search += ke.getKeyChar();
+                    searchList = TreeForSearch.search(search);
+                }
+                
+                searchList = TreeForSearch.search(search);
+                
+                if(searchList != null){
+                    for (String s : searchList) {
+                        m.addElement(s);
+                    }
+
+                    listOfMusics.setModel(m);
+                }else{
+                    if(search.length() != 0){
+                        m.addElement("No results found...");
+                        listOfMusics.setModel(m);
+                    }
+                }
+
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent ke) {
+        }
+
+        public String getSearch() {
+            return search;
+        }
+    }
+
+    private void updateMusicList() {
+
+    }
 }

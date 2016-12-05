@@ -1,5 +1,6 @@
 package SuffixTree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -15,8 +16,9 @@ import java.util.HashMap;
  */
 public class SuffixTree {
 
-    public static HashMap<Character, Integer> alphabet = new HashMap<>();
-    public static HashMap<Integer, Character> alphabet_inverse = new HashMap<>();
+    private static HashMap<Character, Integer> alphabet = new HashMap<>();
+    private static HashMap<Integer, Character> alphabet_inverse = new HashMap<>();
+    private ArrayList<String> search_results = new ArrayList<>();
 
     private Node root;
     
@@ -65,22 +67,31 @@ public class SuffixTree {
      * de caracteres. Em caso de sucesso, a busca exibe na tela todas as palavras da árvore 
      * que iniciam com a palavra passada como parâmetro.
      * @param word Palavra que representa a sequência de caracteres que se deseja procurar.
+     * @return 
      */
-    public void search(String word){
+    public ArrayList<String> search(String word){
+        this.search_results.clear();
         int index = 0;
         Node node = this.root;
         
         // Palavra "vazia"
         if (word.equals("")) 
-            return;
+            return null;
         // Caso o nó que representa a primeira letra da palavra seja nulo 
         // (não há elementos da árvore contendo a palavra como sufixo)
         if (node.next[alphabet.get(word.charAt(index))] == null)
-            return;
+            return null;
         
         while(index < word.length() && node.next[alphabet.get(word.charAt(index))] != null) {
             node = node.next[alphabet.get(word.charAt(index++))];
         }
+        
+        // Caso não haja nenhuma elemnto na árvore tendo a palavra como sufixo 
+        if (index < word.length() && node.next[alphabet.get(word.charAt(index))] == null){
+            System.out.println("ENTROU");
+            return null;
+        }
+            
         
         
             
@@ -106,8 +117,10 @@ public class SuffixTree {
         if(index < word.length() )
             word = word.substring(0, index);
         
+        
         // Chamada do método privado que imprime as palavras da busca
         this.printSearch(node, word);
+        return this.search_results;
     }
     /**
      * Método que imprime os resultados da busca, ou seja, todas as palavras na árvore 
@@ -117,8 +130,9 @@ public class SuffixTree {
      */
     private void printSearch(Node node, String word){
         // Se o nó indica o final de uma palavra, a palavra é impressa.
-        if(node.isWord())
-            System.out.println(word);
+        if(node.isWord()){
+            search_results.add(word);
+        }
         
         for (int i = 0; i < 69; i++){
             if(node.next[i] != null)

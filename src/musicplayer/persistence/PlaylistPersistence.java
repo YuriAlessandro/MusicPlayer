@@ -7,6 +7,7 @@ package musicplayer.persistence;
 
 import banco.BancoPlaylist;
 import banco.BancoUser;
+import banco.TreeForSearch;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -82,6 +83,7 @@ public class PlaylistPersistence {
 //                        System.err.println("adicionei uma música...");
 //                        System.err.println(musicsData[0] + "-" + musicsData[1]);
                         m = new Music(musicsData[0], musicsData[1], true, true);
+//                        TreeForSearch.insert(m.getName());
                         p.addMusic(m);
                     }
                     line = buffRead.readLine();

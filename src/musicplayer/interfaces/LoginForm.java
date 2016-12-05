@@ -55,7 +55,6 @@ public class LoginForm extends javax.swing.JFrame {
         txtLoginPwd = new javax.swing.JPasswordField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
         menuExit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -89,16 +88,13 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel4.setBackground(new java.awt.Color(255, 0, 6));
         jLabel4.setText("JYATH MusicPlayer");
 
-        jMenu1.setText("File");
-
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0));
-        jMenuItem1.setText("Login");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        txtLoginPwd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                txtLoginPwdActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+
+        jMenu1.setText("File");
 
         menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         menuExit.setText("Exit");
@@ -180,7 +176,7 @@ public class LoginForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtLoginUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLoginUserActionPerformed
-        // TODO add your handling code here:
+        this.btnConfirmActionPerformed(evt);
     }//GEN-LAST:event_txtLoginUserActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -209,9 +205,9 @@ public class LoginForm extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_menuExitActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void txtLoginPwdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLoginPwdActionPerformed
         this.btnConfirmActionPerformed(evt);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_txtLoginPwdActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,7 +257,6 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblErrorLogin;
     private javax.swing.JMenuItem menuExit;

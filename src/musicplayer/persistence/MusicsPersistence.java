@@ -6,6 +6,7 @@
 package musicplayer.persistence;
 
 import banco.BancoMusic;
+import banco.TreeForSearch;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -47,6 +48,7 @@ public class MusicsPersistence {
                     
                     if(data[0].equals(u.getUserName())){
                         m = new Music(data[1], data[2], true, false);
+                        TreeForSearch.insert(m.getName());
                     }
                 }
                 
