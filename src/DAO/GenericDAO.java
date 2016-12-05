@@ -1,6 +1,5 @@
-package banco;
+package DAO;
 
-import java.util.Collection;
 
 /**
  *
@@ -10,5 +9,4 @@ import java.util.Collection;
 public interface GenericDAO {
     public void insert(Object o);
     public void remove(Object o);
-    public Collection getDAO(Object o);
 }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @author Thiago César M. D. de Lucena
  */
 public class TreeForSearch {
-    private static final SuffixTree TREE = new SuffixTree();
+    private static final SuffixTree TREE = SuffixTree.getInstance();
     
     public static void insert(String s){
         TREE.insert(s);

@@ -1,5 +1,6 @@
 package musicplayer.persistence;
 
+import DAO.MusicDAO;
 import banco.BancoMusic;
 import banco.TreeForSearch;
 import java.io.BufferedReader;
@@ -18,6 +19,7 @@ import musicplayer.User;
  */
 public class MusicsPersistence {
     private static final String PATH = "src/musicplayer/persistence/persistenceDocs/musics.txt";
+    private static MusicDAO musicDAO = new MusicDAO();
     
     /**
      * Salva músicas em um arquivo
@@ -59,7 +61,7 @@ public class MusicsPersistence {
                     
                     if(data[0].equals(u.getUserName())){
                         m = new Music(data[1], data[2], true, false);
-                        BancoMusic.addMusic(m);
+                        musicDAO.insert(m);
                         TreeForSearch.insert(m.getName());
                     }
                 }

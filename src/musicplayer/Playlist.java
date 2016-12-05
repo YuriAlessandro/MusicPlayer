@@ -1,5 +1,6 @@
 package musicplayer;
 
+import DAO.PlaylistDAO;
 import banco.BancoPlaylist;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public class Playlist {
     private String name;
     private User owner;
     private boolean saved;
+    private PlaylistDAO playlistDAO = new PlaylistDAO();
     
     /**
      * Construtor da classe playlist
@@ -83,10 +85,6 @@ public class Playlist {
      */
     public void setOwner(User owner) {
         this.owner = owner;
-    }
-    
-    private void addOnBanco(){
-        BancoPlaylist.addMusic(this);
     }
     
     /**

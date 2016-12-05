@@ -11,14 +11,6 @@ import musicplayer.Music;
 public class BancoMusic /*implements GenericDAO*/{
     public static ArrayList<Music> MUSICS = new ArrayList<Music>();
     
-    public static void addMusic(Music m){
-        MUSICS.add(m);
-    }
-    
-    public static void remMusic(Music m){
-        MUSICS.remove(m);
-    }
-    
     public static ArrayList<Music> getMusics(){
         return MUSICS;
     }

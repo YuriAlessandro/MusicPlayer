@@ -22,15 +22,21 @@ public class SuffixTree {
     private ArrayList<String> search_results = new ArrayList<>();
 
     private Node root;
+    private static SuffixTree tree;
     
     /**
      * Construtor da árvore. Um novo nó é instanciado para servir de raiz da árvore 
      * e os caracteres do alfabeto são adicionado aos hash maps.
      * @see setAlphabet()
      */
-    public SuffixTree(){
+    private SuffixTree(){
         this.root = new Node();
         this.setAlphabet();
+    }
+    public static SuffixTree getInstance(){
+        if (tree == null)
+            tree = new SuffixTree();
+        return tree;
     }
     /**
      * Retorna a raiz da árvore.
@@ -89,7 +95,6 @@ public class SuffixTree {
         
         // Caso não haja nenhum elemento na árvore tendo a palavra como sufixo 
         if (index < word.length() && node.next[alphabet.get(word.charAt(index))] == null){
-            System.out.println("ENTROU");
             return null;
         }
             

@@ -5,6 +5,8 @@
  */
 package musicplayer.persistence;
 
+import DAO.MusicDAO;
+import DAO.PlaylistDAO;
 import banco.BancoMusic;
 import banco.BancoPlaylist;
 import banco.BancoUser;
@@ -28,6 +30,9 @@ import musicplayer.UserVIP;
  * @author Thiago
  */
 public class PlaylistPersistence {
+    
+    private final static PlaylistDAO playlistDAO = new PlaylistDAO();
+    private final static MusicDAO musicDAO = new MusicDAO();
     
     /**
      * Salva todas as playlists no arquivo, se necessário
@@ -87,7 +92,7 @@ public class PlaylistPersistence {
                 line = buffRead.readLine();
                 data = line.split("~~~");
                 Playlist p = new Playlist(data[0], owner, true);
-                BancoPlaylist.addMusic(p);
+                playlistDAO.insert(p);
                 
                 // Para as outras linhas:
                 line = buffRead.readLine();
@@ -99,7 +104,7 @@ public class PlaylistPersistence {
                     else{
                         musicsData = line.split("~~~");
                         m = new Music(musicsData[0], musicsData[1], true, true);
-                        BancoMusic.addMusic(m);
+                        musicDAO.insert(m);
 //                        TreeForSearch.insert(m.getName());
                         p.addMusic(m);
                     }

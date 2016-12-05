@@ -1,5 +1,6 @@
 package musicplayer;
 
+import DAO.UserDAO;
 import banco.BancoUser;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,6 +18,7 @@ public abstract class User {
     private String pwd;
     private long id;
     private boolean isSave;
+    private UserDAO userDAO = new UserDAO();
     
     /**
      * Construtor da classe
@@ -110,7 +112,7 @@ public abstract class User {
      * Adiciona um Usuário no Banco
      */
     private void addOnDataBase(){
-        BancoUser.addUser(this);
+        userDAO.insert(this);
     }
     
     /**

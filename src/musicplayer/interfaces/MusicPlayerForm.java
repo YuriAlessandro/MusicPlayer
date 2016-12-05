@@ -5,6 +5,8 @@
  */
 package musicplayer.interfaces;
 
+import DAO.MusicDAO;
+import DAO.PlaylistDAO;
 import banco.BancoMusic;
 import banco.BancoPlaylist;
 import banco.TreeForSearch;
@@ -49,6 +51,8 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private boolean playlistMode;
     private ArrayList<String> searchList;
     private boolean wasOpened;
+    private PlaylistDAO playlistDAO = new PlaylistDAO();
+    private MusicDAO musicDAO = new MusicDAO();
 
     /**
      * Cria a nova janela principal do player.
@@ -453,7 +457,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         // Cria música selecionada no seletor
         if (choose == JFileChooser.APPROVE_OPTION) {
             temp = new Music(jf.getSelectedFile().getName(), jf.getSelectedFile().getPath(), false, false);
-            BancoMusic.addMusic(temp);
+            musicDAO.insert(temp);
             TreeForSearch.insert(temp.getName());
         }
 
@@ -475,7 +479,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jf.setMultiSelectionEnabled(false);
         int choose = jf.showOpenDialog(this);
         Music temp = new Music();
-        BancoMusic.addMusic(temp);
+        musicDAO.insert(temp);
 
         if (choose == JFileChooser.APPROVE_OPTION) {
             temp.setName(jf.getSelectedFile().getName());
@@ -486,57 +490,60 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }
 
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
-        // Verifica se não é um PLAY após um PAUSE
-        if (!this.playFromPause) {
-            String mName;
+        // Verifica se existe uma música selecionada.
+        if (this.listOfMusics.getSelectedIndex() != -1){
+            // Verifica se não é um PLAY após um PAUSE
+            if (!this.playFromPause) {
+                String mName;
 
-            /* 
-            Verifica se a lista de músicas está ativada para pegar o nome da
-            música a ser tocada. Se a lista de músicas está desativada, é porque
-            o programa está rodando em modo de playlist. Então ele pega o nome
-            a música na lista de músicas da playlist selecionada.
-             */
-            if (this.listOfMusics.isEnabled()) {
-                mName = this.listOfMusics.getSelectedValue();
-            } else {
-                mName = this.playlistMusics.getSelectedValue();
-            }
-
-            // Música que será tocada
-            Music m = null;
-
-            // Busca no banco o nome da música selecionada na lista.
-            for (Music music : BancoMusic.MUSICS) {
-                // Se encontrar a música no banco, passa para m
-                if (mName.equals(music.getName())) {
-                    m = music;
+                /* 
+                Verifica se a lista de músicas está ativada para pegar o nome da
+                música a ser tocada. Se a lista de músicas está desativada, é porque
+                o programa está rodando em modo de playlist. Então ele pega o nome
+                a música na lista de músicas da playlist selecionada.
+                 */
+                if (this.listOfMusics.isEnabled()) {
+                    mName = this.listOfMusics.getSelectedValue();
+                } else {
+                    mName = this.playlistMusics.getSelectedValue();
                 }
+
+                // Música que será tocada
+                Music m = null;
+
+                // Busca no banco o nome da música selecionada na lista.
+                for (Music music : BancoMusic.MUSICS) {
+                    // Se encontrar a música no banco, passa para m
+                    if (mName.equals(music.getName())) {
+                        m = music;
+                    }
+                }
+
+                /*
+                Se a música for encontrada, inicializa uma nova Thread para ela
+                e dá play na música. */
+                if (m != null) {
+                    // Caminho para a música
+                    this.path = m.getPath();
+                    // Altera o nome da música sendo tocada atualmente
+                    this.lblNameMusic.setText("Now playing " + m.getName());
+
+                    // Dá play na música, iniciando a thread.
+                    this.playMusic = new PlayMusic(this.play, this.path);
+                    this.theadFromMusic = new Thread(this.playMusic);
+                    this.theadFromMusic.start();
+                }
+                // Caso seja um play após um pause, apenas retoma a thread.
+            } else {
+                this.theadFromMusic.resume();
             }
 
-            /*
-            Se a música for encontrada, inicializa uma nova Thread para ela
-            e dá play na música. */
-            if (m != null) {
-                // Caminho para a música
-                this.path = m.getPath();
-                // Altera o nome da música sendo tocada atualmente
-                this.lblNameMusic.setText("Now playing " + m.getName());
-
-                // Dá play na música, iniciando a thread.
-                this.playMusic = new PlayMusic(this.play, this.path);
-                this.theadFromMusic = new Thread(this.playMusic);
-                this.theadFromMusic.start();
-            }
-            // Caso seja um play após um pause, apenas retoma a thread.
-        } else {
-            this.theadFromMusic.resume();
+            btnPlay.setEnabled(false);
+            this.btnPause.setEnabled(true);
+            this.btnStop.setEnabled(true);
+            this.listOfMusics.setEnabled(false);
+            this.playlistMusics.setEnabled(false);
         }
-
-        btnPlay.setEnabled(false);
-        this.btnPause.setEnabled(true);
-        this.btnStop.setEnabled(true);
-        this.listOfMusics.setEnabled(false);
-        this.playlistMusics.setEnabled(false);
 
     }//GEN-LAST:event_btnPlayActionPerformed
 
@@ -592,7 +599,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             // Verifica se o arquivo dentro da pasta é mp3
             if (e.isFile() && e.getName().contains(".mp3")) {
                 m = new Music(e.getName(), e.getAbsolutePath(), false, false);
-                BancoMusic.addMusic(m);
+                musicDAO.insert(m);
                 TreeForSearch.insert(m.getName());
                 this.modelListMusics.addElement(listOfFiles[i].getName());
             }
@@ -611,7 +618,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         } else {
 //            UserVIP vip = (UserVIP) this.user;
             Playlist temp = new Playlist(this.txtNewPName.getText(), this.user, false);
-            BancoPlaylist.addMusic(temp);
+            musicDAO.insert(temp);
             this.txtNewPName.setText("");
             this.updateListOfPlaylist();
         }
@@ -866,7 +873,6 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                 if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     if (search.length() != 0) {
                         this.search = search.substring(0, search.length() - 1);
-                        System.out.println(search.length());
                         if (search.length() == 0) {
                             searchList = null;
                             listOfMusics.setModel(modelListMusics);
