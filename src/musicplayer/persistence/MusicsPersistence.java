@@ -45,10 +45,12 @@ public class MusicsPersistence {
      * @throws IOException Falha na leitura/escrita de arquivo
      */
     public static void readMusics(User u) throws FileNotFoundException, IOException{
+        // Tenta abrir o arquivo para leitura
         try (BufferedReader buffRead = new BufferedReader(new FileReader(MusicsPersistence.PATH))) {
             String line = buffRead.readLine();
             String data[];
             
+            // Lê todas as músicas do arquivo, tratando suas informações
             while(true){
                 Music m;
                 if(line == null) break;
