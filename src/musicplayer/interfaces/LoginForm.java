@@ -31,6 +31,7 @@ public class LoginForm extends javax.swing.JFrame {
         initComponents();
         this.setResizable(false);
         User admin = new UserVIP("admin", "admin", true);
+//        BancoUser.addUser(admin);
         UsersPersistence.readUsers();
     }
 

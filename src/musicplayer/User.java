@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package musicplayer;
 
 import banco.BancoUser;
@@ -13,15 +8,23 @@ import java.util.UUID;
 import musicplayer.persistence.UsersPersistence;
 
 /**
- *
- * @author yurialessandro
+ * Classe que determina um usuário da aplicação.
+ * @author Yuri Alessandro Martins
+ * @author Thiago
  */
 public abstract class User {
     private String userName;
     private String pwd;
     private long id;
     private boolean isSave;
-
+    
+    /**
+     * Construtor da classe
+     * @param userName Nome do usuário
+     * @param pwd Senha do usuário
+     * @param isSave True, se está salvo na persistência
+     * @throws IOException Erro na leitura/escrita de arquivos
+     */
     public User(String userName, String pwd, boolean isSave) throws IOException{
         this.userName = userName;
         this.pwd = pwd;
@@ -55,6 +58,9 @@ public abstract class User {
         this.id = id;
     }
     
+    /**
+     * Gera um ID único para o usuário
+     */
     private void generateId(){
         UUID uid = UUID.randomUUID();
         this.id = Math.abs(uid.getLeastSignificantBits());
@@ -74,7 +80,11 @@ public abstract class User {
     private void addOnDataBase(){
         BancoUser.addUser(this);
     }
-
+    
+    /**
+     * Adiciona usuário na persistência de dados.
+     * @throws IOException Erro na leitura/escrita de arquivos. 
+     */
     private void addOnPersistence() throws IOException {
         UsersPersistence.saveUser(this);
     }

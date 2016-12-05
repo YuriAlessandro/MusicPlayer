@@ -12,7 +12,7 @@ import musicplayer.User;
  *
  * @author yurialessandro
  */
-public class BancoUser {
+public class BancoUser /*implements GenericDAO*/ {
     public static Tree USERS = new Tree();
     
     public static void addUser(User p){

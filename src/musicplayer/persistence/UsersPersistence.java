@@ -5,6 +5,7 @@
  */
 package musicplayer.persistence;
 
+import banco.BancoUser;
 import com.sun.xml.internal.ws.util.StringUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -48,7 +49,11 @@ public class UsersPersistence {
                     
                     if(data[2].equals("true")){
                         u = new UserVIP(data[0], data[1], true);
-                    }else u = new UserCommom(data[0], data[1], true);
+//                        BancoUser.addUser(u);
+                    }else{
+                        u = new UserCommom(data[0], data[1], true);
+//                        BancoUser.addUser(u);
+                    }
                 }
                 
                 line = buffRead.readLine();

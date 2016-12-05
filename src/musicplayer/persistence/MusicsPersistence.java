@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package musicplayer.persistence;
 
 import banco.BancoMusic;
@@ -17,17 +12,25 @@ import musicplayer.Music;
 import musicplayer.User;
 
 /**
- *
- * @author yurialessandro
+ * Classe responsável pela persistência de músicas
+ * @author Yuri Alessandro Martins
+ * @author Thiago
  */
 public class MusicsPersistence {
     private static final String PATH = "src/musicplayer/persistence/persistenceDocs/musics.txt";
     
+    /**
+     * Salva músicas em um arquivo
+     * @param u Usuário que adicionou a música.
+     * @throws IOException Erro na escrita do arquivo.
+     */
     public static void saveMusics(User u) throws IOException{
+        // Tenta abrir o arquivo para escrita.
         try (BufferedWriter buffWrite = new BufferedWriter(new FileWriter(MusicsPersistence.PATH, true))) {
-            
+            // Para as músicas do banco, salva os dados no arquivo.
             for(Music m : BancoMusic.MUSICS){
-                if(!m.isIsSaved()){
+                // Apenas se as músicas não estiverem salvas.
+                if(!m.isSaved()){
                     buffWrite.append(u.getUserName() + "~~" + m.getName() + "~~" + m.getPath());
                     buffWrite.append("\n");
                 }
@@ -35,6 +38,12 @@ public class MusicsPersistence {
         }
     }
     
+    /**
+     * Lê usuários de um arquivo e os adiciona no banco.
+     * @param u Usuário que está conectado à aplicação
+     * @throws FileNotFoundException Não encontrou o arquivo a ser lido
+     * @throws IOException Falha na leitura/escrita de arquivo
+     */
     public static void readMusics(User u) throws FileNotFoundException, IOException{
         try (BufferedReader buffRead = new BufferedReader(new FileReader(MusicsPersistence.PATH))) {
             String line = buffRead.readLine();
@@ -48,6 +57,7 @@ public class MusicsPersistence {
                     
                     if(data[0].equals(u.getUserName())){
                         m = new Music(data[1], data[2], true, false);
+                        BancoMusic.addMusic(m);
                         TreeForSearch.insert(m.getName());
                     }
                 }

@@ -5,6 +5,7 @@
  */
 package musicplayer.persistence;
 
+import banco.BancoMusic;
 import banco.BancoPlaylist;
 import banco.BancoUser;
 import banco.TreeForSearch;
@@ -70,6 +71,7 @@ public class PlaylistPersistence {
                 data = line.split("~~~");
 //                System.err.println("LINE 2:" + data[0]);
                 Playlist p = new Playlist(data[0], owner, true);
+                BancoPlaylist.addMusic(p);
                 
                 // Others lines:
                 line = buffRead.readLine();
@@ -83,6 +85,7 @@ public class PlaylistPersistence {
 //                        System.err.println("adicionei uma música...");
 //                        System.err.println(musicsData[0] + "-" + musicsData[1]);
                         m = new Music(musicsData[0], musicsData[1], true, true);
+                        BancoMusic.addMusic(m);
 //                        TreeForSearch.insert(m.getName());
                         p.addMusic(m);
                     }

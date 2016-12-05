@@ -5,18 +5,14 @@
  */
 package musicplayer.interfaces;
 
-import SuffixTree.SuffixTree;
 import banco.BancoMusic;
 import banco.BancoPlaylist;
 import banco.TreeForSearch;
-import java.awt.Component;
-import java.awt.List;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import javazoom.jl.player.Player;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
@@ -33,13 +28,12 @@ import musicplayer.Music;
 import musicplayer.Playlist;
 import musicplayer.User;
 import musicplayer.UserCommom;
-import musicplayer.UserVIP;
 import musicplayer.persistence.MusicsPersistence;
 import musicplayer.persistence.PlaylistPersistence;
 
 /**
  *
- * @author yurialessandro
+ * @author Yuri Alessandro e Thiago Cesar
  */
 public class MusicPlayerForm extends javax.swing.JFrame {
 
@@ -55,62 +49,76 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     private boolean playlistMode;
     private ArrayList<String> searchList;
     private boolean wasOpened;
-//    private SuffixTree treeMusics;
-//    private Player play;
-    
+
     /**
-     * Creates new form MusicPlayerForm
+     * Cria a nova janela principal do player.
      *
-     * @param u
-     * @throws java.io.IOException
+     * @param u Usuário que estará utilizando o player.
+     * @throws java.io.IOException Falha na leitura de arquivos de persistência.
      */
     public MusicPlayerForm(User u) throws IOException {
         initComponents();
         this.searchList = new ArrayList<>();
-//        this.treeMusics = new SuffixTree();
-        this.setResizable(false);
-//        this.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
-//        this.listOfMusics.clearSelection();
 
+        // Não permitir que a janela se redimensione.
+        this.setResizable(false);
+
+        // Usuário que está utilizando o player.
         this.user = u;
 
+        // Verifica se é um usuário comum para desativar funções do VIP.
         if (u instanceof UserCommom) {
             this.btnVipPanel.setEnabled(false);
             this.btnNewPlaylist.setEnabled(false);
             this.txtPName.setEnabled(false);
         }
 
+        // Define o nome do usuário na IU
         this.txtUserName.setText(u.getUserName());
+
+        // Definindo o estado inicial de alguns componentes da IU
         this.playFromPause = false;
         this.playlistMode = false;
-
         this.btnPause.setEnabled(false);
         this.btnStop.setEnabled(false);
         this.playlistMusics.setEnabled(false);
         this.btnAddMusic.setEnabled(false);
-        
-        if(!wasOpened){
-            System.err.println("entrou");
-            MusicsPersistence.readMusics(u);
-            PlaylistPersistence.readPlaylists();
 
+        /*
+        Testa se o player já estava aberto (Para o sistema de logoff)
+        (Não funcionando muito bem)
+         */
+        if (!wasOpened) {
+//            System.err.println("entrou");
+
+            // Lendo a persistência das músicas
+            MusicsPersistence.readMusics(u);
+
+            // Populando a lista de músicas com o que foi lido do arquivo.
             for (Music m : BancoMusic.MUSICS) {
                 if (!m.isFromPlaylist()) {
                     this.modelListMusics.addElement(m.getName());
                 }
             }
 
+            this.listOfMusics.setModel(this.modelListMusics);
+
+            // Lendo a persistência das playlists
+            PlaylistPersistence.readPlaylists();
+
             for (Playlist p : BancoPlaylist.PLAYLISTS) {
                 this.modelPlaylists.addElement(p.getName());
             }
 
             this.listOfPlaylist.setModel(this.modelPlaylists);
-            this.listOfMusics.setModel(this.modelListMusics);
-            
+
+            // Define o que deve acontecer quando o usuário clica no 'X' para
+            // sair do programa.
             this.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
                     try {
+                        // Salva as músicas e playlists na persistência.
                         MusicsPersistence.saveMusics(user);
                         PlaylistPersistence.savePlaylists();
                     } catch (IOException ex) {
@@ -127,11 +135,6 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -435,23 +438,34 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnChooseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseFileActionPerformed
+        // Cria um novo seletor de arquivos
         JFileChooser jf = new JFileChooser();
+        // Define um filtro para o seletor
         FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3 Songs", "mp3");
         jf.addChoosableFileFilter(filter);
         jf.setAcceptAllFileFilterUsed(true);
         jf.setMultiSelectionEnabled(false);
+
         int choose = jf.showOpenDialog(this);
         Music temp = null;
 
+        // Cria música selecionada no seletor
         if (choose == JFileChooser.APPROVE_OPTION) {
             temp = new Music(jf.getSelectedFile().getName(), jf.getSelectedFile().getPath(), false, false);
+            BancoMusic.addMusic(temp);
             TreeForSearch.insert(temp.getName());
         }
 
+        // Atualiza a lista de músicas.
         this.modelListMusics.addElement(temp.getName());
         listOfMusics.setModel(this.modelListMusics);
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
+    /**
+     * Determina a música selecionada a partir do seletor de arquivos.
+     *
+     * @return Música selecionada no seletor.
+     */
     private Music selectAMusic() {
         JFileChooser jf = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3 Songs", "mp3");
@@ -460,6 +474,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         jf.setMultiSelectionEnabled(false);
         int choose = jf.showOpenDialog(this);
         Music temp = new Music();
+        BancoMusic.addMusic(temp);
 
         if (choose == JFileChooser.APPROVE_OPTION) {
             temp.setName(jf.getSelectedFile().getName());
@@ -470,30 +485,48 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }
 
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
+        // Verifica se não é um PLAY após um PAUSE
         if (!this.playFromPause) {
-
             String mName;
+
+            /* 
+            Verifica se a lista de músicas está ativada para pegar o nome da
+            música a ser tocada. Se a lista de músicas está desativada, é porque
+            o programa está rodando em modo de playlist. Então ele pega o nome
+            a música na lista de músicas da playlist selecionada.
+             */
             if (this.listOfMusics.isEnabled()) {
                 mName = this.listOfMusics.getSelectedValue();
             } else {
                 mName = this.playlistMusics.getSelectedValue();
             }
 
+            // Música que será tocada
             Music m = null;
 
+            // Busca no banco o nome da música selecionada na lista.
             for (Music music : BancoMusic.MUSICS) {
+                // Se encontrar a música no banco, passa para m
                 if (mName.equals(music.getName())) {
                     m = music;
                 }
             }
+
+            /*
+            Se a música for encontrada, inicializa uma nova Thread para ela
+            e dá play na música. */
             if (m != null) {
+                // Caminho para a música
                 this.path = m.getPath();
+                // Altera o nome da música sendo tocada atualmente
                 this.lblNameMusic.setText("Now playing " + m.getName());
 
+                // Dá play na música, iniciando a thread.
                 this.playMusic = new PlayMusic(this.play, this.path);
                 this.theadFromMusic = new Thread(this.playMusic);
                 this.theadFromMusic.start();
             }
+            // Caso seja um play após um pause, apenas retoma a thread.
         } else {
             this.theadFromMusic.resume();
         }
@@ -511,11 +544,14 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVipPanelActionPerformed
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
+        // Para a thead. Primeiramente, muda o estado de alguns componentes.
         this.theadFromMusic.stop();
         this.btnPlay.setEnabled(true);
         this.btnPause.setEnabled(true);
         this.playFromPause = false;
         this.lblNameMusic.setText("");
+        
+        // Veifica qual o modo (música solo ou playlist) para reativar o componente certo.
         if (!this.playlistMode) {
             this.listOfMusics.setEnabled(true);
         } else {
@@ -525,49 +561,63 @@ public class MusicPlayerForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseActionPerformed
+        // Suspende a thread, e ativa alguns componentes.
         this.theadFromMusic.suspend();
         this.btnPlay.setEnabled(true);
         this.btnPause.setEnabled(false);
+        // Determina que foi um pause.
         this.playFromPause = true;
     }//GEN-LAST:event_btnPauseActionPerformed
 
     private void btnAddDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddDirActionPerformed
+        // Cria um novo seletor de arquivos (apenas diretórios).
         JFileChooser jf = new JFileChooser();
         jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jf.setAcceptAllFileFilterUsed(true);
         jf.setMultiSelectionEnabled(false);
 
         int w = jf.showOpenDialog(this);
+        // Pega o diretório selecionado e salva em 'f'
         File f = jf.getSelectedFile();
         String dirPath = f.getName();
-
+        
+        // Todos arquivos em f no array de File.
         File[] listOfFiles = f.listFiles();
         Music m;
-
+        
+        // Para cada arquivo em 'listOfFiles', ele cria a nova música.
         for (int i = 0; i < listOfFiles.length; i++) {
             File e = listOfFiles[i];
+            // Verifica se o arquivo dentro da pasta é mp3
             if (e.isFile() && e.getName().contains(".mp3")) {
                 m = new Music(e.getName(), e.getAbsolutePath(), false, false);
+                BancoMusic.addMusic(m);
                 TreeForSearch.insert(m.getName());
                 this.modelListMusics.addElement(listOfFiles[i].getName());
             }
         }
-
+        
+        // Atualiza a lista de músicas na IU
         this.listOfMusics.setModel(this.modelListMusics);
     }//GEN-LAST:event_btnAddDirActionPerformed
 
     private void btnNewPlaylistActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewPlaylistActionPerformed
+        // Adiciona uma nova playlist.
+        
+        // Verifica se o nome na caixa de texto é vazio
         if (this.txtNewPName.getText().isEmpty()) {
             this.txtNewPName.setText("Put a name...");
         } else {
 //            UserVIP vip = (UserVIP) this.user;
             Playlist temp = new Playlist(this.txtNewPName.getText(), this.user, false);
+            BancoPlaylist.addMusic(temp);
             this.txtNewPName.setText("");
             this.updateListOfPlaylist();
         }
     }//GEN-LAST:event_btnNewPlaylistActionPerformed
 
     private void updateListOfPlaylist() {
+        // Atualiza a lista de playlist.
 //        UserVIP temp = (UserVIP) this.user;
         DefaultListModel p1 = new DefaultListModel();
 
@@ -578,8 +628,12 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         this.listOfPlaylist.setModel(p1);
     }
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        // Seleciona uma playlist da lista.
 //        if(this.playlistMusics.getModel().getSize() != 0){
+        
+        // Se não estiver em modo de playlist
         if (!this.playlistMode) {
+            // Passa a ficar em modo de playlist
             this.playlistMode = true;
             this.listOfPlaylist.setEnabled(false);
             this.listOfMusics.setEnabled(false);
@@ -588,7 +642,8 @@ public class MusicPlayerForm extends javax.swing.JFrame {
 
             String selected = this.listOfPlaylist.getSelectedValue();
             DefaultListModel model = new DefaultListModel();
-
+            
+            // Exibe todas as músicas da playlist na lista.
             for (Playlist p : BancoPlaylist.PLAYLISTS) {
                 if (p.getName().equals(selected)) {
                     this.txtPName.setText(p.getName());
@@ -601,10 +656,16 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                     }
                 }
             }
+            // Atualiza a lista de músicas da playlista na IU
             this.playlistMusics.setModel(model);
-
+            
+            // Atualiza o botão para "Deselect"
             this.btnSelect.setText("Deselect");
         } else {
+            /*
+            Se não for, apenas volta o modo e reativa os componentes 
+            para o estado inicial.
+            */
             this.playlistMode = false;
             this.modelListPlaylistMusics.clear();
             this.playlistMusics.setEnabled(false);
@@ -650,7 +711,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         }
         this.setVisible(false);
         this.dispose();
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -771,14 +832,13 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             keys.add(KeyEvent.VK_MINUS);
 //                keys.add(KeyEvent.VK_);
 
-            
             if ((a > 47 && a < 59) || (a > 64 && a < 91) || keys.contains(a)) {
                 DefaultListModel m = new DefaultListModel();
                 if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                     if (search.length() != 0) {
                         this.search = search.substring(0, search.length() - 1);
                         System.out.println(search.length());
-                        if(search.length() == 0){
+                        if (search.length() == 0) {
                             searchList = null;
                             listOfMusics.setModel(modelListMusics);
                         }
@@ -788,17 +848,17 @@ public class MusicPlayerForm extends javax.swing.JFrame {
                     this.search += ke.getKeyChar();
                     searchList = TreeForSearch.search(search);
                 }
-                
+
                 searchList = TreeForSearch.search(search);
-                
-                if(searchList != null){
+
+                if (searchList != null) {
                     for (String s : searchList) {
                         m.addElement(s);
                     }
 
                     listOfMusics.setModel(m);
-                }else{
-                    if(search.length() != 0){
+                } else {
+                    if (search.length() != 0) {
                         m.addElement("No results found...");
                         listOfMusics.setModel(m);
                     }
@@ -816,7 +876,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         }
     }
 
-    private void updateMusicList() {
-
-    }
+//    private void updateMusicList() {
+//
+//    }
 }

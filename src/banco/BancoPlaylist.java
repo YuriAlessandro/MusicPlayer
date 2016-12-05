@@ -12,7 +12,7 @@ import musicplayer.Playlist;
  *
  * @author yurialessandro
  */
-public class BancoPlaylist {
+public class BancoPlaylist /*implements GenericDAO*/ {
     public static ArrayList<Playlist> PLAYLISTS = new ArrayList<Playlist>();
     
     public static void addMusic(Playlist p){
