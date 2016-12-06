@@ -26,7 +26,8 @@ public class LoginForm extends javax.swing.JFrame {
             
     /**
      * Creates new form LoginForm
-     * @throws java.io.IOException
+     * @throws java.io.IOException Erro na leitura/escrita de arquivos.
+     * @throws UserNameWithSpaceException Erro de nome de usuário com espaços.
      */
     public LoginForm() throws IOException, UserNameWithSpaceException {
         initComponents();

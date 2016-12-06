@@ -16,7 +16,7 @@ public class UserCommom extends User{
      * @param pwd Senha do usuário
      * @param isSave True, se está salvo na persistência
      * @throws IOException Erro na leitura/escrita de arquivos
-     * @throws exceptions.UserNameWithSpaceException
+     * @throws exceptions.UserNameWithSpaceException Erro de nome de usuário com espaços.
      */
     public UserCommom(String userName, String pwd, boolean isSave) throws IOException, UserNameWithSpaceException {
         super(userName, pwd, isSave);

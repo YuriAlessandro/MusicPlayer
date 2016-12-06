@@ -29,7 +29,7 @@ public class Tree {
 
     /**
      * Insere novos usuários na árvore. Implementado de forma recursiva.
-     * @see Pessoa 
+     * @see User 
      * @param p Novo usuário a ser adicionado na árvore.
      */
     public void insert(User p) {
@@ -310,7 +310,7 @@ public class Tree {
 
     /**
      * Busca binaria da Arvore Binaria de Busca padrão.
-     * @param id
+     * @param id Id do usuário.
      * @return Nó do usuário que foi buscado. null se o usuário não estiver na árvore.
      */
     public Node searchDepth(long id) {

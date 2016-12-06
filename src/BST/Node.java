@@ -12,7 +12,7 @@ import musicplayer.User;
  * A sub-árvore a esquerda e a sub-árvore a direita.
  * @author Yuri Alessandro Martins
  * @author Thiago César M. D. de Lucena
- * @see Arvore
+ * @see Tree
  * @version 20160211
  *
  */
