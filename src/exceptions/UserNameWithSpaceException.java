@@ -5,8 +5,6 @@
  */
 package exceptions;
 
-import com.sun.xml.internal.ws.api.message.Message;
-
 
 /**
  *

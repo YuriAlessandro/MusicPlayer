@@ -1,35 +1,20 @@
 package banco;
 
 import java.util.ArrayList;
-//import java.util.Collection;
 import musicplayer.Music;
 
 /**
+ * Classe que funciona como o banco de músicas da aplicação.
  * @author Yuri Alessandro Martins
  * @author Thiago César M. D. de Lucena
  */
-public class BancoMusic /*implements GenericDAO*/{
+public class BancoMusic {
     public static ArrayList<Music> MUSICS = new ArrayList<Music>();
-    
+    /**
+     * Obter o banco de músicas.
+     * @return Banco de músicas.
+     */
     public static ArrayList<Music> getMusics(){
         return MUSICS;
     }
-
-//    @Override
-//    public void insert(Object o) {
-//        Music m = (Music) o;
-//        MUSICS.add(m);
-//    }
-//
-//    @Override
-//    public void remove(Object o) {
-//        Music m = (Music) o;
-//        MUSICS.remove(m);
-//    }
-//
-//    @Override
-//    public Collection getDAO(Object o) {
-//        return MUSICS;
-//    }
-
 }

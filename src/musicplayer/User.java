@@ -31,9 +31,7 @@ public abstract class User {
      */
     public User(String userName, String pwd, boolean isSave) throws IOException, UserNameWithSpaceException{
         if(userName.contains(" ")){
-            System.out.println("ENTROU");
             throw new UserNameWithSpaceException("User name cannot have spaces on its name!");
-
         }
         this.userName = userName;
         this.pwd = pwd;

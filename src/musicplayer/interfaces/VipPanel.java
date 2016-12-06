@@ -170,33 +170,43 @@ public class VipPanel extends javax.swing.JFrame {
 
     private void btnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmActionPerformed
         User temp;
+        boolean exception_caught = false;
         switch (boxType.getSelectedIndex()) {
             case 0:
         {
             try {
-                try {
+                temp = new UserCommom(txtCUserName.getText(), txtCUserPwd.getText(), false);
+                
+                /*try {
                     temp = new UserCommom(txtCUserName.getText(), txtCUserPwd.getText(), false);
                 } catch (UserNameWithSpaceException ex) {
                    txtAdd.setText("User name cannot have spaces!");
                    txtCUserName.setText("");
                    txtCUserPwd.setText("");
-                }
+                }*/
+            } catch (UserNameWithSpaceException e) {
+                txtCUserName.setText("");
+                txtCUserPwd.setText("");
+                exception_caught = true;
             } catch (IOException ex) {
                 Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+
         }
+            if (exception_caught)
+                txtAdd.setText("User name cannot have spaces!");
+            else
                 txtAdd.setText("User added.");
                 break;
             case 1:
         {
             try {
-                try {
-                    temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText(), false);
-                } catch (UserNameWithSpaceException ex) {
+                temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText(), false);
+            } catch (UserNameWithSpaceException ex) {
                     txtAdd.setText("User name cannot have spaces!");
                     txtCUserName.setText("");
                     txtCUserPwd.setText("");
-                }
             } catch (IOException ex) {
                 Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
             }

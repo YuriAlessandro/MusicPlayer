@@ -10,6 +10,7 @@ import DAO.PlaylistDAO;
 import banco.BancoMusic;
 import banco.BancoPlaylist;
 import banco.TreeForSearch;
+import exceptions.UserNameWithSpaceException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -714,6 +715,8 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         this.wasOpened = true;
         try {
             new LoginForm().setVisible(true);
+        } catch (UserNameWithSpaceException e){
+            
         } catch (IOException ex) {
             Logger.getLogger(MusicPlayerForm.class.getName()).log(Level.SEVERE, null, ex);
         }

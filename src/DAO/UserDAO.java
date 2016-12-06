@@ -1,25 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package DAO;
 
 import banco.BancoUser;
 import musicplayer.User;
 
 /**
- *
- * @author thiag
+ * Classe que implementa a interface GenericDAO para acesso ao banco de usuários.
+ * @author Yuri Alessandro Martins
+ * @author Thiago César M. D. de Lucena
  */
 public class UserDAO implements GenericDAO{
-
+    /**
+     * Insere um usuário no banco de usuários.
+     * @param o Usuário a ser inserido.
+     */
     @Override
     public void insert(Object o) {
         User u = (User) o;
         BancoUser.getUsers().insert(u);
     }
-
+    /**
+     * Remove um usuário do banco de usuários.
+     * @param o Usuário a ser removido.
+     */
     @Override
     public void remove(Object o) {
         User u = (User) o;
