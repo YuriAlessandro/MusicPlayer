@@ -200,17 +200,20 @@ public class VipPanel extends javax.swing.JFrame {
             try {
                 temp = new UserVIP(txtCUserName.getText(), txtCUserPwd.getText(), false);
             } catch (UserNameWithSpaceException ex) {
-                    txtAdd.setText("User name cannot have spaces!");
                     txtCUserName.setText("");
                     txtCUserPwd.setText("");
+                    exception_caught = true;
             } catch (IOException ex) {
                 Logger.getLogger(VipPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-                txtAdd.setText("User VIP added.");
+                if (exception_caught)
+                    txtAdd.setText("User name cannot have spaces!");
+                else
+                    txtAdd.setText("User added.");
                 break;
             default:
-                txtAdd.setText("Something seems to have gone awry ...");
+                txtAdd.setText("Something have gone wrong. Close this window and try again.");
                 break;
         }
         

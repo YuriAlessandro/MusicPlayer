@@ -488,7 +488,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
 
     private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
         // Verifica se existe uma música selecionada.
-        if (this.listOfMusics.getSelectedIndex() != -1){
+//        if (this.listOfMusics.getSelectedIndex() != -1){
             // Verifica se não é um PLAY após um PAUSE
             if (!this.playFromPause) {
                 String mName;
@@ -540,7 +540,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
             this.btnStop.setEnabled(true);
             this.listOfMusics.setEnabled(false);
             this.playlistMusics.setEnabled(false);
-        }
+//        }
 
     }//GEN-LAST:event_btnPlayActionPerformed
 
@@ -615,7 +615,7 @@ public class MusicPlayerForm extends javax.swing.JFrame {
         } else {
 //            UserVIP vip = (UserVIP) this.user;
             Playlist temp = new Playlist(this.txtNewPName.getText(), this.user, false);
-            musicDAO.insert(temp);
+            playlistDAO.insert(temp);
             this.txtNewPName.setText("");
             this.updateListOfPlaylist();
         }
