@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package musicplayer.interfaces;
 
 import DAO.MusicDAO;
@@ -36,7 +31,8 @@ import musicplayer.persistence.PlaylistPersistence;
 
 /**
  *
- * @author Yuri Alessandro e Thiago Cesar
+ * @author Yuri Alessandro Martins
+ * @author Thiago César M. D. de Lucena
  */
 public class MusicPlayerForm extends javax.swing.JFrame {
 

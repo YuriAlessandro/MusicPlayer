@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package musicplayer.persistence;
 
 import exceptions.UserNameWithSpaceException;
@@ -20,8 +15,8 @@ import musicplayer.UserVIP;
 
 /**
  * Classe que garante a persistência dos usuários
- * @author yurialessandro
- * @author Thiago
+ * @author Yuri Alessandro Martins
+ * @author Thiago César M. D. de Lucena
  */
 public class UsersPersistence {
     private static final String PATH = "src/musicplayer/persistence/persistenceDocs/users.txt"; 

@@ -14,7 +14,6 @@ public class Music {
     
     /**
      * Construtor da classe música.
-     * 
      */
     public Music() {
     }
@@ -51,7 +50,7 @@ public class Music {
     
     /**
      * Obter o caminho da música.
-     * @return String contendo o caminho da música.
+     * @return Caminho da música.
      */
     public String getPath() {
         return path;
@@ -66,24 +65,24 @@ public class Music {
     }
     
     /**
-     * Obter o estado da música (se ela está salva na persistência)
-     * @return True, se a música já está salva na persistência.
+     * Obter estado da música (se ela está salva na persistência).
+     * @return True, se a música já está salva na persistência. False, caso contrário.
      */
     public boolean isSaved() {
         return saved;
     }
     
     /**
-     * 
-     * @param isSaved 
+     * Definir se a música já está salva na persistência.
+     * @param isSaved Booleano indicando se a música já está salva na persistência.
      */
     public void setIsSaved(boolean isSaved) {
         this.saved = isSaved;
     }
     
     /**
-     * 
-     * @return 
+     * Obter estado da música (se ela faz parte de alguma playlist).
+     * @return True, se a música pertence a alguma playlist. False, caso contrário.
      */
     public boolean isFromPlaylist() {
         return fromPlaylist;

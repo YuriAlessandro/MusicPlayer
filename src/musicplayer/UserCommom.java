@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Classe que define um usuário sem privilégios
  * @author Yuri Alessandro Martins
- * @author Thiago
+ * @author Thiago César M. D. de Lucena
  */
 public class UserCommom extends User{
     

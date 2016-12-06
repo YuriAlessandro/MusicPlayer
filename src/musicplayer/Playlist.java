@@ -1,13 +1,12 @@
 package musicplayer;
 
 import DAO.PlaylistDAO;
-import banco.BancoPlaylist;
 import java.util.ArrayList;
 
 /**
  * Classe que determina uma playlist de músicas.
  * @author Yuri Alessandro Martins
- * @author Thiago
+ * @author Thiago César M. D. de Lucena
  */
 public class Playlist {
     
@@ -40,64 +39,64 @@ public class Playlist {
     }
     
     /**
-     * 
-     * @return 
+     * Obter lista de músicas da playlist.
+     * @return ArrayList contendo a lista de músicas da playlist.
      */
     public ArrayList<Music> getMusics() {
         return musics;
     }
     
     /**
-     * 
-     * @param musics 
+     * Define a lista de músicas da playlist.
+     * @param musics ArrayList com as novas músicas da playlist.
      */
     public void setMusics(ArrayList<Music> musics) {
         this.musics = musics;
     }
     
     /**
-     * 
-     * @return 
+     * Obter nome da playlist.
+     * @return Nome da playlist.
      */
     public String getName() {
         return name;
     }
     
     /**
-     * 
-     * @param name 
+     * Definir nome da playlist.
+     * @param name Novo nome da playlist.
      */
     public void setName(String name) {
         this.name = name;
     }
     
     /**
-     * 
-     * @return 
+     * Obter dono da playlist.
+     * @return Usuário dono da playlist.
      */
     public User getOwner() {
         return owner;
     }
     
     /**
-     * 
-     * @param owner 
+     * Definir dono da playlist.
+     * @param owner Usuário que será o novo dono da playlist.
      */
     public void setOwner(User owner) {
         this.owner = owner;
     }
     
     /**
-     * 
-     * @return 
+     * Obter estado da playlist (se ela foi salva na persistência).
+     * @return True, se a playlist está na perssistência. False, caso contrário.
      */
     public boolean isSaved() {
         return saved;
     }
     
     /**
-     * 
-     * @param saved 
+     * Definir se a playlist encontra-se na persistência.
+     * @param saved Booleano que define se a música encontra-se na persistência.
      */
     public void setSaved(boolean saved) {
         this.saved = saved;

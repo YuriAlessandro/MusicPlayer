@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import musicplayer.User;
-import musicplayer.UserCommom;
 import musicplayer.UserVIP;
 import musicplayer.persistence.UsersPersistence;
 
 /**
- *
- * @author yurialessandro
+ * 
+ * @author Yuri Alessandro Martins
+ * @author Thiago César M. D. de Lucena
  */
 public class LoginForm extends javax.swing.JFrame {
     

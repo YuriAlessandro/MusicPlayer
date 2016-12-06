@@ -1,7 +1,6 @@
 package musicplayer;
 
 import DAO.UserDAO;
-import banco.BancoUser;
 import exceptions.UserNameWithSpaceException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,9 +9,9 @@ import java.util.UUID;
 import musicplayer.persistence.UsersPersistence;
 
 /**
- * Classe que determina um usuário da aplicação.
+ * Classe abstrata que determina um usuário da aplicação.
  * @author Yuri Alessandro Martins
- * @author Thiago
+ * @author Thiago César M. D. de Lucena
  */
 public abstract class User {
     private String userName;
@@ -42,48 +41,48 @@ public abstract class User {
     }
     
     /**
-     * 
-     * @return 
+     * Obter nome do usuário.
+     * @return Nome do usuário.
      */
     public String getUserName() {
         return userName;
     }
     
     /**
-     * 
-     * @param userName 
+     * Definir nome do usuário.
+     * @param userName Novo nome do usuário.
      */
     public void setUserName(String userName) {
         this.userName = userName;
     }
     
     /**
-     * 
-     * @return 
+     * Obter senha do usuário.
+     * @return Senha do usuário.
      */
     public String getPwd() {
         return pwd;
     }
     
     /**
-     * 
-     * @param pwd 
+     * Definir senha do usuário.
+     * @param pwd Nova senha do usuário.
      */
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
     
     /**
-     * 
-     * @return 
+     * Obter id do usuário.
+     * @return Id do usuário.
      */
     public long getId() {
         return id;
     }
     
     /**
-     * 
-     * @param id 
+     * Definir id do usuário.
+     * @param id Novo id do usuário.
      */
     public void setId(long id) {
         this.id = id;
@@ -98,8 +97,8 @@ public abstract class User {
     }
     
     /**
-     * 
-     * @param file  
+     * Armazenar usuário em um arquivo de texto (persistência do usuário).
+     * @param file  Arquivo onde se deseja armazenar o usuário.
      */
     private void writeUserInFile(FileWriter file){
         PrintWriter printUsers = new PrintWriter(file);
@@ -112,7 +111,6 @@ public abstract class User {
             
     }
     
-    // Retirar daqui pelo amor de Deus.
     /**
      * Adiciona um Usuário no Banco
      */

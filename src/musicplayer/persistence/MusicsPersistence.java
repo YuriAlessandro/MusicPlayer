@@ -15,7 +15,7 @@ import musicplayer.User;
 /**
  * Classe responsável pela persistência de músicas
  * @author Yuri Alessandro Martins
- * @author Thiago
+ * @author Thiago César M. D. de Lucena
  */
 public class MusicsPersistence {
     private static final String PATH = "src/musicplayer/persistence/persistenceDocs/musics.txt";

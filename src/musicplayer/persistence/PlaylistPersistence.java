@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package musicplayer.persistence;
 
 import DAO.MusicDAO;
@@ -27,7 +22,7 @@ import musicplayer.UserVIP;
 /**
  * Arquivo que garante a persitência das playlists
  * @author Yuri Alessandro Martins
- * @author Thiago
+ * @author Thiago César M. D. de Lucena
  */
 public class PlaylistPersistence {
     
